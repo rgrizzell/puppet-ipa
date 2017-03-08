@@ -13,6 +13,7 @@
 class ipa::master (
   $svrpkg        = {},
   $dns           = {},
+  $ip_address    = {},
   $forwarders    = [],
   $realm         = {},
   $domain        = {},
@@ -100,10 +101,18 @@ class ipa::master (
     }
     $dnsopt = '--setup-dns'
     realize Package['bind-dyndb-ldap']
+    realize Package['ipa-server-dns']
   }
   else {
     $dnsopt = ''
     $forwarderopts = ''
+  }
+
+  if $ipa::master::ip_address {
+    $ip_addressopt = "--ip-address ${ipa::master::ip_address}"
+  }
+  else {
+    $ip_addressopt = ''
   }
 
   $ntpopt = $ipa::master::ntp ? {
@@ -129,6 +138,7 @@ class ipa::master (
     adminpw       => $ipa::master::adminpw,
     dspw          => $ipa::master::dspw,
     dnsopt        => $ipa::master::dnsopt,
+    ip_addressopt => $ipa::master::ip_addressopt,
     forwarderopts => $ipa::master::forwarderopts,
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,

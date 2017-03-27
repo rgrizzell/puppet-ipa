@@ -13,7 +13,7 @@
 class ipa::master (
   $svrpkg        = {},
   $dns           = {},
-  $ip_address    = {},
+  $ip_address    = undef,
   $forwarders    = [],
   $realm         = {},
   $domain        = {},

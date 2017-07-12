@@ -48,7 +48,8 @@
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
 #  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
-#
+#  $enable_firewall = true - Install and Configure iptables ? this is not desired for docker container 
+#  $enable_hostname = true - Configure hostname during instalation? this is not desired for docker container 
 # === Variables
 #
 #
@@ -112,7 +113,9 @@ class ipa (
     'Debian' => 'ldap-utils',
     default  => 'openldap-clients',
   },
-  $idstart       = false
+  $idstart       = false,
+  $enable_firewall = true,
+  $enable_hostname = true
 ) {
 
   @package { $ipa::svrpkg:
@@ -160,6 +163,9 @@ class ipa (
   }
 
   if $ipa::dns {
+    @package {'ipa-server-dns':
+      ensure => installed
+    }
     @package { 'bind-dyndb-ldap':
       ensure => installed
     }
@@ -265,7 +271,9 @@ class ipa (
       http_pin      => $ipa::http_pin,
       subject       => $ipa::subject,
       selfsign      => $ipa::selfsign,
-      idstart       => $ipa::idstart
+      idstart       => $ipa::idstart,
+      enable_firewall => $ipa::enable_firewall,
+      enable_hostname => $ipa::enable_hostname,
     }
 
     if ! $ipa::adminpw {
@@ -279,12 +287,13 @@ class ipa (
 
   if $ipa::replica {
     class { 'ipa::replica':
-      svrpkg  => $ipa::svrpkg,
-      domain  => downcase($ipa::domain),
-      adminpw => $ipa::adminpw,
-      dspw    => $ipa::dspw,
-      kstart  => $ipa::kstart,
-      sssd    => $ipa::sssd
+      svrpkg          => $ipa::svrpkg,
+      domain          => downcase($ipa::domain),
+      adminpw         => $ipa::adminpw,
+      dspw            => $ipa::dspw,
+      kstart          => $ipa::kstart,
+      sssd            => $ipa::sssd,
+      enable_firewall => $ipa::enable_firewall,
     }
 
     class { 'ipa::client':

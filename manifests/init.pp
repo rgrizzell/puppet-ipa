@@ -14,6 +14,7 @@
 #  $dspw = undef - Defines the IPA directory services password.
 #  $otp = undef - Defines an IPA client one-time-password.
 #  $dns = false - Controls the option to configure a DNS zone with the IPA master setup.
+#  $ip_address = undef -  Specifies the IP address of the server.
 #  $fixedprimary = false - Configure sssd to use a fixed server as the primary IPA server.
 #  $forwarders = [] - Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
 #  $extca = false - Controls the option to configure an external CA.
@@ -71,6 +72,7 @@ class ipa (
   $dspw          = undef,
   $otp           = undef,
   $dns           = false,
+  $ip_address    = undef,
   $fixedprimary  = false,
   $forwarders    = [],
   $extca         = false,
@@ -102,13 +104,13 @@ class ipa (
   $autofs        = false,
   $svrpkg        = 'ipa-server',
   $clntpkg       = $::osfamily ? {
-    Debian  => 'freeipa-client',
-    default => 'ipa-client',
+    'Debian' => 'freeipa-client',
+    default  => 'ipa-client',
   },
   $ldaputils     = true,
   $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
-    default => 'openldap-clients',
+    'Debian' => 'ldap-utils',
+    default  => 'openldap-clients',
   },
   $idstart       = false
 ) {
@@ -159,6 +161,9 @@ class ipa (
 
   if $ipa::dns {
     @package { 'bind-dyndb-ldap':
+      ensure => installed
+    }
+    @package { 'ipa-server-dns':
       ensure => installed
     }
   }
@@ -234,6 +239,7 @@ class ipa (
     class { 'ipa::master':
       svrpkg        => $ipa::svrpkg,
       dns           => $ipa::dns,
+      ip_address    => $ipa::ip_address,
       forwarders    => $ipa::forwarders,
       domain        => downcase($ipa::domain),
       realm         => upcase($ipa::realm),
@@ -273,12 +279,12 @@ class ipa (
 
   if $ipa::replica {
     class { 'ipa::replica':
-      svrpkg      => $ipa::svrpkg,
-      domain      => downcase($ipa::domain),
-      adminpw     => $ipa::adminpw,
-      dspw        => $ipa::dspw,
-      kstart      => $ipa::kstart,
-      sssd        => $ipa::sssd
+      svrpkg  => $ipa::svrpkg,
+      domain  => downcase($ipa::domain),
+      adminpw => $ipa::adminpw,
+      dspw    => $ipa::dspw,
+      kstart  => $ipa::kstart,
+      sssd    => $ipa::sssd
     }
 
     class { 'ipa::client':

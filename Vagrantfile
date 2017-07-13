@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
     #config.vm.box = "puppetlabs/centos-7.2-64-puppet"
 
     config.vm.box = "bento/centos-7.3"
+    config.vm.hostname = 'vagrant-ipa.example.lan'
     # Assign this VM to a host-only network IP, allowing you to access it
     # via the IP.
     config.vm.provider 'virtualbox' do |vb|
@@ -33,7 +34,7 @@ puppet module install puppet-selinux
 if [ -d /tmp/modules/ipa ]; then rm -rf /tmp/modules/ipa; fi
 mkdir -p /tmp/modules/ipa
 cp -r /vagrant/* /tmp/modules/ipa
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "class {'::ipa': ipa_role => 'server', domain => 'vagrant.ipa.explorys.net', realm => 'vagrant.ipa.explorys.net', admin_password => 'vagrant', directory_services_password => 'vagrant', install_ipa_server => true,}"
+puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "class {'::ipa': ipa_role => 'server', domain => 'vagrant.ipa.explorys.net', realm => 'vagrant.ipa.explorys.net', ipa_server_fqdn => 'vagrant-ipa.example.lan', admin_password => 'vagrant123', directory_services_password => 'vagrant123', install_ipa_server => true, ip_address => '192.168.44.35', enable_ip_address => true, enable_hostname => false,}"
 SCRIPT
 
     config.vm.provision "shell", inline: $script

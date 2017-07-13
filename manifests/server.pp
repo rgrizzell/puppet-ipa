@@ -1,4 +1,5 @@
-class ipa::server () inherits ::ipa {
+#
+class ipa::server {
 
   if $::osfamily != 'RedHat' and $::osfamily != 'Centos' {
     fail("This module cannot configure IPA server on the ${::operatingsystem} operating system.")

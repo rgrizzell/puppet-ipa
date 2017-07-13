@@ -1,4 +1,4 @@
-# Definition: ipa::configsudo
+sssd.# Definition: ipa::configsudo
 #
 # Configures sudoers in LDAP
 define ipa::configsudo (

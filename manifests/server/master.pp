@@ -41,10 +41,10 @@ class ipa::master {
   }
 
   if $ipa::configure_automount {
-    if $ipa::install_autofs {
-      realize Service['autofs']
-      realize Package['autofs']
-    }
+    # if $ipa::install_autofs {
+    #   realize Service['autofs']
+    #   realize Package['autofs']
+    # }
 
     Ipa::Configautomount <<| |>> {
       name    => $ipa::ipa_server_fqdn,
@@ -64,10 +64,10 @@ class ipa::master {
 
   realize Package[$ipa::ipa_server_package_name]
 
-  if $ipa::install_sssd {
-    realize Package[$ipa::sssd_package_name]
-    realize Service['sssd']
-  }
+  # if $ipa::install_sssd {
+  #   realize Package[$ipa::sssd_package_name]
+  #   realize Service['sssd']
+  # }
 
   if $ipa::install_kstart {
     realize Package[$ipa::kstart_package_name]
@@ -80,48 +80,48 @@ class ipa::master {
     }
   }
 
-  if $ipa::configure_dns_server {
-    $dnsopt = '--setup-dns'
+  # if $ipa::configure_dns_server {
+  #   $dnsopt = '--setup-dns'
+  #
+  #   if size($ipa::forwarders) > 0 {
+  #     $forwarderopts = join(prefix($ipa::forwarders, '--forwarder '), ' ')
+  #   }
+  #   else {
+  #     $forwarderopts = '--no-forwarders'
+  #   }
+  #
+  #   realize Package['bind-dyndb-ldap']
+  #   realize Package['ipa-server-dns']
+  # }
+  # else {
+  #   $dnsopt = ''
+  #   $forwarderopts = ''
+  # }
 
-    if size($ipa::forwarders) > 0 {
-      $forwarderopts = join(prefix($ipa::forwarders, '--forwarder '), ' ')
-    }
-    else {
-      $forwarderopts = '--no-forwarders'
-    }
-
-    realize Package['bind-dyndb-ldap']
-    realize Package['ipa-server-dns']
-  }
-  else {
-    $dnsopt = ''
-    $forwarderopts = ''
-  }
-
-  $ip_addressopt = $ipa::enable_ip_address ? {
-    true => "--ip-address ${ipa::ip_address}",
-    default => '',
-  }
-
-  $hostopt = $ipa::enable_hostname ? {
-    true    => "--hostname=${ipa::ipa_server_fqdn}",
-    default => '',
-  }
-
-  $ntpopt = $ipa::configure_ntp ? {
-    false   => '--no-ntp',
-    default => '',
-  }
-
-  $extcaopt = $ipa::use_external_ca ? {
-    true    => '--external-ca',
-    default => '',
-  }
-
-  $final_idstart = $ipa::idstart ? {
-    false => fqdn_rand('10737') + 10000,
-    default => $ipa::idstart,
-  }
+  # $ip_addressopt = $ipa::enable_ip_address ? {
+  #   true => "--ip-address ${ipa::ip_address}",
+  #   default => '',
+  # }
+  #
+  # $hostopt = $ipa::enable_hostname ? {
+  #   true    => "--hostname=${ipa::ipa_server_fqdn}",
+  #   default => '',
+  # }
+  #
+  # $ntpopt = $ipa::configure_ntp ? {
+  #   false   => '--no-ntp',
+  #   default => '',
+  # }
+  #
+  # $extcaopt = $ipa::use_external_ca ? {
+  #   true    => '--external-ca',
+  #   default => '',
+  # }
+  #
+  # $final_idstart = $ipa::idstart ? {
+  #   false => fqdn_rand('10737') + 10000,
+  #   default => $ipa::idstart,
+  # }
 
   # ipa::serverinstall { $::fqdn:
   #   realm         => $ipa::master::realm,

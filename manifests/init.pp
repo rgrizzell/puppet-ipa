@@ -67,7 +67,7 @@
 # === Copyright
 #
 #
-# TODO: Move to params.pp and base some of these off of client vs server
+# TODO: enable local host entry for hostname + ipaddress (for vagrant, for example).
 class ipa (
   $admin_password,
   $directory_services_password,
@@ -80,6 +80,7 @@ class ipa (
   $configure_automount     = false,
   $configure_dns_server    = false,
   $configure_ntp           = false,
+  $custom_dns_forwarders   = [],
   $debiansudopkg           = true,
   $dirsrv_pin              = undef,
   $dirsrv_pkcs12           = undef,
@@ -91,10 +92,9 @@ class ipa (
   $extcert                 = undef,
   $external_ca_server_file = undef,
   $fixedprimary            = false,
-  $forwarders              = [],
   $http_pkcs12             = undef,
   $http_pin                = undef,
-  $idstart                 = false,
+  $idstart                 = undef,
   $install_autofs          = false,
   $install_kstart          = true,
   $install_ldaputils       = true,
@@ -129,74 +129,9 @@ class ipa (
   $use_external_ca         = false,
 ) {
 
-  if $install_ipa_server {
-    include 'ipa::server'
-  }
+  class {'::ipa::validate_params':}
+  -> class {'::ipa::install':}
 
-  # TODO: Validate ipa_role
 
-  if $install_sssd {
-    @package { $sssd_package_name:
-      ensure => present,
-    }
-
-    @service { 'sssd':
-      ensure  => 'running',
-      enable  => true,
-      require => Package[$sssd_package_name],
-    }
-  }
-
-  if $install_autofs {
-    @package { $autofs_package_name:
-      ensure => present,
-    }
-
-    @service { 'autofs':
-      ensure => 'running',
-      enable => true,
-    }
-  }
-
-  if $install_ipa_server {
-    validate_legacy(
-      Optional[String],
-      'validate_re',
-      $admin_password,
-      '.{8,}',   # At least 8 characters
-    )
-
-    validate_legacy(
-      Optional[String],
-      'validate_re',
-      $directory_services_password,
-      '.{8,}',   # At least 8 characters
-    )
-  }
-
-  if $idstart {
-    validate_legacy(
-      Optional[String],
-      'validate_re',
-      $idstart,
-      '^\d+$',   # all digits
-    )
-
-    if $idstart < 10000 {
-      fail('Parameter "idstart" must be an integer greater than 10000.')
-    }
-  }
-
-  if ! is_domain_name($domain) {
-    fail('Parameter "domain" is not a valid domain name.')
-  }
-
-  if ! is_domain_name($realm) {
-    fail('Parameter "realm" is not a valid domain name.')
-  }
-
-  if $install_ipa_client {
-    include 'ipa::client'
-  }
 
 }

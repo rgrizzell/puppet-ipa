@@ -4,6 +4,10 @@
 #
 # === Parameters
 #
+#
+#  ipa_role
+#    Should be set to 'master', 'replicate', or 'client'.
+#
 #  $master = false - Configures a server to be an IPA master LDAP/Kerberos node.
 #  $replica = false - Configures a server to be an IPA replica LDAP/Kerberos node.
 #  $client = false - Configures a server to be an IPA client.
@@ -49,7 +53,8 @@
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
 #  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
 #  $enable_firewall = true - Install and Configure iptables ? this is not desired for docker container 
-#  $enable_hostname = true - Configure hostname during instalation? this is not desired for docker container 
+#  $enable_hostname = true - Configure hostname during instalation? this is not desired for docker container
+#
 # === Variables
 #
 #
@@ -62,304 +67,136 @@
 # === Copyright
 #
 #
+# TODO: Move to params.pp and base some of these off of client vs server
 class ipa (
-  $master        = false,
-  $replica       = false,
-  $client        = false,
-  $cleanup       = false,
-  $domain        = undef,
-  $realm         = undef,
-  $adminpw       = undef,
-  $dspw          = undef,
-  $otp           = undef,
-  $dns           = false,
-  $ip_address    = undef,
-  $fixedprimary  = false,
-  $forwarders    = [],
-  $extca         = false,
-  $extcertpath   = undef,
-  $extcert       = undef,
-  $extcacertpath = undef,
-  $extcacert     = undef,
-  $dirsrv_pkcs12 = undef,
-  $http_pkcs12   = undef,
-  $dirsrv_pin    = undef,
-  $http_pin      = undef,
-  $subject       = undef,
-  $selfsign      = false,
-  $loadbalance   = false,
-  $ipaservers    = [],
-  $mkhomedir     = false,
-  $ntp           = false,
-  $kstart        = true,
-  $desc          = '',
-  $locality      = '',
-  $location      = '',
-  $sssdtools     = true,
-  $sssdtoolspkg  = 'sssd-tools',
-  $sssd          = true,
-  $sudo          = false,
-  $sudopw        = undef,
-  $debiansudopkg = true,
-  $automount     = false,
-  $autofs        = false,
-  $svrpkg        = 'ipa-server',
-  $clntpkg       = $::osfamily ? {
+  $admin_password,
+  $directory_services_password,
+  $domain,
+  $ipa_role,
+  $realm,
+  $autofs_package_name     = 'autofs',
+  $cleanup                 = false,
+  $client_description      = undef,
+  $configure_automount     = false,
+  $configure_dns_server    = false,
+  $configure_ntp           = false,
+  $debiansudopkg           = true,
+  $dirsrv_pin              = undef,
+  $dirsrv_pkcs12           = undef,
+  $enable_firewall         = true,
+  $enable_hostname         = true,
+  $enable_ip_address       = false,
+  $extcacert               = undef,
+  $extcertpath             = undef,
+  $extcert                 = undef,
+  $external_ca_server_file = undef,
+  $fixedprimary            = false,
+  $forwarders              = [],
+  $http_pkcs12             = undef,
+  $http_pin                = undef,
+  $idstart                 = false,
+  $install_autofs          = false,
+  $install_kstart          = true,
+  $install_ldaputils       = true,
+  $install_sssdtools       = true,
+  $ipa_client_package_name = $::osfamily ? {
     'Debian' => 'freeipa-client',
     default  => 'ipa-client',
   },
-  $ldaputils     = true,
-  $ldaputilspkg  = $::osfamily ? {
+  $ipa_server_package_name = 'ipa-server',
+  $ipaservers              = [],
+  $install_ipa_client      = false,
+  $install_ipa_server      = false,
+  $install_sssd            = true,
+  $ip_address              = undef,
+  $ipa_server_fqdn         = $::fqdn,
+  $kstart_package_name     = 'kstart',
+  $ldaputils_package_name  = $::osfamily ? {
     'Debian' => 'ldap-utils',
     default  => 'openldap-clients',
   },
-  $idstart       = false,
-  $enable_firewall = true,
-  $enable_hostname = true
+  $loadbalance             = false,
+  $locality                = '',
+  $location                = '',
+  $mkhomedir               = false,
+  $one_time_password       = undef,
+  $selfsign                = false,
+  $sssd_package_name       = 'sssd-common',
+  $sssdtools_package_name  = 'sssd-tools',
+  $subject                 = undef,
+  $sudo                    = false,
+  $sudopw                  = undef,
+  $use_external_ca         = false,
 ) {
 
-  @package { $ipa::svrpkg:
-    ensure => installed
+  if $install_ipa_server {
+    include 'ipa::server'
   }
 
-  @package { $ipa::clntpkg:
-    ensure => installed
-  }
+  # TODO: Validate ipa_role
 
-  if $ipa::ldaputils {
-    @package { $ipa::ldaputilspkg:
-      ensure => installed
-    }
-  }
-
-  if $ipa::sssdtools {
-    @package { $ipa::sssdtoolspkg:
-      ensure => installed
-    }
-  }
-
-  if $ipa::kstart {
-    @package { 'kstart':
-      ensure => installed
-    }
-  }
-
-  @service { 'ipa':
-    ensure  => 'running',
-    enable  => true,
-    require => Package[$ipa::svrpkg]
-  }
-
-  if $ipa::sssd {
-    @package { 'sssd-common':
-      ensure => installed
+  if $install_sssd {
+    @package { $sssd_package_name:
+      ensure => present,
     }
 
     @service { 'sssd':
       ensure  => 'running',
       enable  => true,
-      require => Package['sssd-common']
+      require => Package[$sssd_package_name],
     }
   }
 
-  if $ipa::dns {
-    @package {'ipa-server-dns':
-      ensure => installed
-    }
-    @package { 'bind-dyndb-ldap':
-      ensure => installed
-    }
-    @package { 'ipa-server-dns':
-      ensure => installed
-    }
-  }
-
-  if $ipa::mkhomedir and $::osfamily == 'RedHat' and $::lsbmajdistrelease == '6' {
-    service { 'oddjobd':
-      ensure => 'running',
-      enable => true
-    }
-  }
-
-  if $ipa::autofs {
-    @package { 'autofs':
-      ensure => installed
+  if $install_autofs {
+    @package { $autofs_package_name:
+      ensure => present,
     }
 
     @service { 'autofs':
       ensure => 'running',
-      enable => true
+      enable => true,
     }
   }
 
-  @cron { 'k5start_root':
-    command => '/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1',
-    user    => 'root',
-    minute  => '*/1',
-    require => Package['kstart']
+  if $install_ipa_server {
+    validate_legacy(
+      Optional[String],
+      'validate_re',
+      $admin_password,
+      '.{8,}',   # At least 8 characters
+    )
+
+    validate_legacy(
+      Optional[String],
+      'validate_re',
+      $directory_services_password,
+      '.{8,}',   # At least 8 characters
+    )
   }
 
-  if $ipa::master and $ipa::replica {
-    fail('Conflicting options selected. Cannot configure both master and replica at once.')
-  }
+  if $idstart {
+    validate_legacy(
+      Optional[String],
+      'validate_re',
+      $idstart,
+      '^\d+$',   # all digits
+    )
 
-  if ! $ipa::cleanup {
-    if $ipa::master or $ipa::replica {
-      validate_re($ipa::adminpw,'^.........*$','Parameter "adminpw" must be at least 8 characters long')
-      validate_re($ipa::dspw,'^.........*$','Parameter "dspw" must be at least 8 characters long')
-    }
-    if $ipa::master and $ipa::idstart {
-      validate_re($ipa::idstart,'^......*$', 'Parameter "idstart" must be an integer greater than 10000 ')
-      validate_re($ipa::idstart,'^\d+$', 'Parameter "idstart" must be an integer ')
-    }
-
-    if ! $ipa::domain {
-      fail('Required parameter "domain" missing')
-    }
-
-    if ! $ipa::realm {
-      fail('Required parameter "realm" missing')
-    }
-
-    if ! is_domain_name($ipa::domain) {
-      fail('Parameter "domain" is not a valid domain name')
-    }
-
-    if ! is_domain_name($ipa::realm) {
-      fail('Parameter "realm" is not a valid domain name')
+    if $idstart < 10000 {
+      fail('Parameter "idstart" must be an integer greater than 10000.')
     }
   }
 
-  if $ipa::cleanup {
-    if $ipa::master or $ipa::replica or $ipa::client {
-      fail('Conflicting options selected. Cannot cleanup during an installation.')
-    } else {
-      ipa::cleanup { $::fqdn:
-        svrpkg  => $ipa::svrpkg,
-        clntpkg => $ipa::clntpkg
-      }
-    }
+  if ! is_domain_name($domain) {
+    fail('Parameter "domain" is not a valid domain name.')
   }
 
-  if $ipa::master {
-    class { 'ipa::master':
-      svrpkg        => $ipa::svrpkg,
-      dns           => $ipa::dns,
-      ip_address    => $ipa::ip_address,
-      forwarders    => $ipa::forwarders,
-      domain        => downcase($ipa::domain),
-      realm         => upcase($ipa::realm),
-      adminpw       => $ipa::adminpw,
-      dspw          => $ipa::dspw,
-      loadbalance   => $ipa::loadbalance,
-      ipaservers    => $ipa::ipaservers,
-      sudo          => $ipa::sudo,
-      sudopw        => $ipa::sudopw,
-      automount     => $ipa::automount,
-      autofs        => $ipa::autofs,
-      kstart        => $ipa::kstart,
-      sssd          => $ipa::sssd,
-      ntp           => $ipa::ntp,
-      extca         => $ipa::extca,
-      extcertpath   => $ipa::extcertpath,
-      extcert       => $ipa::extcert,
-      extcacertpath => $ipa::extcacertpath,
-      extcacert     => $ipa::extcacert,
-      dirsrv_pkcs12 => $ipa::dirsrv_pkcs12,
-      http_pkcs12   => $ipa::http_pkcs12,
-      dirsrv_pin    => $ipa::dirsrv_pin,
-      http_pin      => $ipa::http_pin,
-      subject       => $ipa::subject,
-      selfsign      => $ipa::selfsign,
-      idstart       => $ipa::idstart,
-      enable_firewall => $ipa::enable_firewall,
-      enable_hostname => $ipa::enable_hostname,
-    }
-
-    if ! $ipa::adminpw {
-      fail('Required parameter "adminpw" missing')
-    }
-
-    if ! $ipa::dspw {
-      fail('Required parameter "dspw" missing')
-    }
+  if ! is_domain_name($realm) {
+    fail('Parameter "realm" is not a valid domain name.')
   }
 
-  if $ipa::replica {
-    class { 'ipa::replica':
-      svrpkg          => $ipa::svrpkg,
-      domain          => downcase($ipa::domain),
-      adminpw         => $ipa::adminpw,
-      dspw            => $ipa::dspw,
-      kstart          => $ipa::kstart,
-      sssd            => $ipa::sssd,
-      enable_firewall => $ipa::enable_firewall,
-    }
-
-    class { 'ipa::client':
-      clntpkg      => $ipa::clntpkg,
-      ldaputils    => $ipa::ldaputils,
-      ldaputilspkg => $ipa::ldaputilspkg,
-      sssdtools    => $ipa::sssdtools,
-      sssdtoolspkg => $ipa::sssdtoolspkg,
-      sssd         => $ipa::sssd,
-      kstart       => $ipa::kstart,
-      loadbalance  => $ipa::loadbalance,
-      ipaservers   => $ipa::ipaservers,
-      mkhomedir    => $ipa::mkhomedir,
-      domain       => downcase($ipa::domain),
-      realm        => upcase($ipa::realm),
-      otp          => $ipa::otp,
-      sudo         => $ipa::sudo,
-      automount    => $ipa::automount,
-      autofs       => $ipa::autofs,
-      ntp          => $ipa::ntp,
-      fixedprimary => $ipa::fixedprimary,
-      desc         => $ipa::desc,
-      locality     => $ipa::locality,
-      location     => $ipa::location
-    }
-
-    if ! $ipa::adminpw {
-      fail('Required parameter "adminpw" missing')
-    }
-
-    if ! $ipa::dspw {
-      fail('Required parameter "dspw" missing')
-    }
-
-    if ! $ipa::otp {
-      fail('Required parameter "otp" missing')
-    }
+  if $install_ipa_client {
+    include 'ipa::client'
   }
 
-  if $ipa::client {
-    class { 'ipa::client':
-      clntpkg       => $ipa::clntpkg,
-      ldaputils     => $ipa::ldaputils,
-      ldaputilspkg  => $ipa::ldaputilspkg,
-      sssdtools     => $ipa::sssdtools,
-      sssdtoolspkg  => $ipa::sssdtoolspkg,
-      sssd          => $ipa::sssd,
-      domain        => downcase($ipa::domain),
-      realm         => upcase($ipa::realm),
-      otp           => $ipa::otp,
-      sudo          => $ipa::sudo,
-      debiansudopkg => $ipa::debiansudopkg,
-      automount     => $ipa::automount,
-      autofs        => $ipa::autofs,
-      mkhomedir     => $ipa::mkhomedir,
-      loadbalance   => $ipa::loadbalance,
-      ipaservers    => $ipa::ipaservers,
-      ntp           => $ipa::ntp,
-      fixedprimary  => $ipa::fixedprimary,
-      desc          => $ipa::desc,
-      locality      => $ipa::locality,
-      location      => $ipa::location
-    }
-
-    if ! $ipa::otp {
-      fail('Required parameter "otp" missing')
-    }
-  }
 }

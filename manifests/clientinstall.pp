@@ -13,6 +13,10 @@ define ipa::clientinstall (
   $fixedprimary = false
 ) {
 
+  @package { $ipa::ipa_client_package_name:
+    ensure => present,
+  }
+
   Exec["client-install-${host}"] ~> Ipa::Flushcache["client-${host}"]
 
   $mkhomediropt = $mkhomedir ? {

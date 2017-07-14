@@ -60,29 +60,14 @@ class ipa::install::server {
     $server_install_cmd_opts_forwarders = ''
   }
 
-  $server_install_cmd = "\
-/usr/sbin/ipa-server-install \
-  ${server_install_cmd_opts_hostname}    \
-  --realm=${ipa::final_realm} \
-  --domain=${ipa::domain} \
-  --admin-password='${ipa::admin_password}' \
-  --ds-password='${ipa::directory_services_password}' \
-  ${server_install_cmd_opts_setup_dns} \
-  ${server_install_cmd_opts_forwarders} \
-  ${server_install_cmd_opts_ip_address} \
-  ${server_install_cmd_opts_no_ntp} \
-  ${server_install_cmd_opts_external_ca} \
-  ${server_install_cmd_opts_idstart} \
-  --unattended"
+  if $ipa::ipa_role == 'master' {
+    contain 'ipa::install::server::master'
+  }
 
-  exec { "serverinstall_${ipa::ipa_server_fqdn}":
-    command   => $server_install_cmd,
-    timeout   => 0,
-    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
-    creates   => '/etc/ipa/default.conf',
-    logoutput => 'on_failure',
-    notify    => Ipa::Helpers::Flushcache["server_${ipa::ipa_server_fqdn}"],
-    before    => Service['sssd'],
+  service { 'ipa':
+    ensure  => 'running',
+    enable  => true,
+    require => Exec["serverinstall_${ipa::ipa_server_fqdn}"],
   }
 
   if $ipa::install_sssd {

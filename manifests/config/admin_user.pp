@@ -64,7 +64,7 @@ class ipa::config::admin_user {
   }
 
   $k5start_admin_keytab_cmd = "/sbin/runuser -l admin -c \"/usr/bin/k5start -f ${home_dir_path}/admin.keytab -U\""
-  $k5start_admin_keytab_cmd_unless = "/sbin/runuser -l admin -c /usr/bin/klist | grep -i krbtgt\/${ipa::final_realm}\@"
+  $k5start_admin_keytab_cmd_unless = "/sbin/runuser -l admin -c /usr/bin/klist | grep -i krbtgt\\/${ipa::final_realm}\\@"
   exec { 'k5start_admin_keytab':
     command => $k5start_admin_keytab_cmd,
     cwd     => $home_dir_path,

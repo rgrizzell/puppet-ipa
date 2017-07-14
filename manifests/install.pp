@@ -24,11 +24,25 @@ class ipa::install {
     contain 'ipa::install::autofs'
   }
 
-  if $ipa::configure_dns_server {
-    package{'bind-dyndb-ldap':
+  if $ipa::install_ldaputils {
+    package { $ipa::ldaputils_package_name:
       ensure => present,
     }
-    package{'ipa-server-dns':
+  }
+
+  if $ipa::install_sssdtools {
+    package { $ipa::sssdtools_package_name:
+      ensure => present,
+    }
+  }
+
+  if $ipa::configure_dns_server {
+    $dns_packages = [
+      'ipa-server-dns',
+      'bind-dyndb-ldap',
+      'ipa-server-dns',
+    ]
+    package{$dns_packages:
       ensure => present,
     }
   }

@@ -84,6 +84,8 @@ class ipa (
   $debiansudopkg           = true,
   $dirsrv_pin              = undef,
   $dirsrv_pkcs12           = undef,
+  $domain_join_principal   = undef,
+  $domain_join_password    = undef,
   $enable_firewall         = true,
   $enable_hostname         = true,
   $enable_ip_address       = false,
@@ -122,6 +124,7 @@ class ipa (
   $manage_host_entry       = false,
   $mkhomedir               = false,
   $one_time_password       = undef,
+  $replica_fqdn_list       = [],
   $selfsign                = false,
   $sssd_package_name       = 'sssd-common',
   $sssdtools_package_name  = 'sssd-tools',
@@ -146,10 +149,22 @@ class ipa (
     "@${final_realm}"
   )
 
-  if $ipa::idstart {
+  if $idstart {
     $final_idstart = $idstart
   } else {
     $final_idstart = fqdn_rand('10737') + 10000
+  }
+
+  if $domain_join_principal {
+    $final_domain_join_principal = $domain_join_principal
+  } else {
+    $final_domain_join_principal = 'admin'
+  }
+
+  if $domain_join_password {
+    $final_domain_join_password = $domain_join_password
+  } else {
+    $final_domain_join_password = $admin_password
   }
 
   class {'::ipa::validate_params':}

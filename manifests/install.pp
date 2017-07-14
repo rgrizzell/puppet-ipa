@@ -1,19 +1,27 @@
 #
 class ipa::install {
 
+  if $ipa::install_epel {
+    ensure_resource(
+      'package',
+      'epel-release',
+      {'ensure' => 'present'},
+    )
+  }
+
   if $ipa::manage_host_entry {
     host { $ipa::ipa_server_fqdn:
       ip => $ipa::ip_address,
     }
   }
 
-  # TODO: sssd.conf
-  # if $ipa::install_sssd {
-  #   contain 'ipa::helper_packages::sssd'
-  # }
+  # Note: sssd.conf handled by ipa-server-install.
+  if $ipa::install_sssd {
+    contain 'ipa::install::sssd'
+  }
 
   if $ipa::install_autofs {
-    contain 'ipa::helper_packages::autofs'
+    contain 'ipa::install::autofs'
   }
 
   if $ipa::configure_dns_server {

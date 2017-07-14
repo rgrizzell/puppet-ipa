@@ -54,14 +54,6 @@ class ipa::master {
     }
   }
 
-  $principals = suffix(
-    prefix(
-      [$ipa::ipa_server_fqdn],
-      'host/'
-    ),
-    "@${ipa::realm}"
-  )
-
   realize Package[$ipa::ipa_server_package_name]
 
   # if $ipa::install_sssd {

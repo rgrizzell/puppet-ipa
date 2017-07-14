@@ -1,5 +1,5 @@
 #
-class ipa::helper_packages::autofs {
+class ipa::install::autofs {
   package { $ipa::autofs_package_name:
     ensure => present,
   }

@@ -7,12 +7,11 @@ class ipa::install::server {
     ensure => present,
   }
 
-  if $ipa::idstart {
-    $final_idstart = $ipa::idstart
-  } else {
-    $final_idstart = fqdn_rand('10737') + 10000
+  package{$ipa::kstart_package_name:
+    ensure => present,
   }
-  $server_install_cmd_opts_idstart = "--idstart=${final_idstart}"
+
+  $server_install_cmd_opts_idstart = "--idstart=${ipa::final_idstart}"
 
   if $ipa::enable_hostname {
     $server_install_cmd_opts_hostname = "--hostname=${ipa::ipa_server_fqdn}"
@@ -64,7 +63,7 @@ class ipa::install::server {
   $server_install_cmd = "\
 /usr/sbin/ipa-server-install \
   ${server_install_cmd_opts_hostname}    \
-  --realm=${ipa::realm} \
+  --realm=${ipa::final_realm} \
   --domain=${ipa::domain} \
   --admin-password='${ipa::admin_password}' \
   --ds-password='${ipa::directory_services_password}' \
@@ -76,28 +75,26 @@ class ipa::install::server {
   ${server_install_cmd_opts_idstart} \
   --unattended"
 
-  exec { "serverinstall-${ipa::ipa_server_fqdn}":
+  exec { "serverinstall_${ipa::ipa_server_fqdn}":
     command   => $server_install_cmd,
     timeout   => 0,
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
-    # notify    => Ipa::Flushcache["server-${ipa::ipa_server_fqdn}"],
-    logoutput => 'on_failure'
+    logoutput => 'on_failure',
+    notify    => Ipa::Helpers::Flushcache["server_${ipa::ipa_server_fqdn}"],
+    before    => Service['sssd'],
   }
 
-  # ipa::flushcache { "server-${ipa::ipa_server_fqdn}":
-  #   notify  => Ipa::Adminconfig[$ipa::ipa_server_fqdn],
-  #   require => Anchor['ipa::serverinstall::start']
-  # }
-  #
-  # ipa::adminconfig { $ipa::ipa_server_fqdn:
-  #   realm   => $ipa::realm,
-  #   idstart => $ipa::idstart,
-  #   require => Anchor['ipa::serverinstall::start']
-  # }
-  #
-  # anchor { 'ipa::serverinstall::end':
-  #   require => [Ipa::Flushcache["server-${ipa::ipa_server_fqdn}"], Ipa::Adminconfig[$ipa::ipa_server_fqdn]]
-  # }
+  if $ipa::install_sssd {
+    service { 'sssd':
+      ensure  => 'running',
+      enable  => true,
+      require => Package[$ipa::sssd_package_name],
+    }
+  }
+
+  # TODO: might require relationship
+  ipa::helpers::flushcache { "server_${ipa::ipa_server_fqdn}": }
+  class {'ipa::config::admin_user': }
 
 }

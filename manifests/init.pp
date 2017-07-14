@@ -73,7 +73,7 @@ class ipa (
   $directory_services_password,
   $domain,
   $ipa_role,
-  $realm,
+  $realm                   = undef,
   $autofs_package_name     = 'autofs',
   $cleanup                 = false,
   $client_description      = undef,
@@ -96,6 +96,7 @@ class ipa (
   $http_pin                = undef,
   $idstart                 = undef,
   $install_autofs          = false,
+  $install_epel            = false,
   $install_kstart          = true,
   $install_ldaputils       = true,
   $install_sssdtools       = true,
@@ -130,9 +131,28 @@ class ipa (
   $use_external_ca         = false,
 ) {
 
+  # TODO: move to params.pp
+  if $realm {
+    $final_realm = $realm
+  } else {
+    $final_realm = upcase($domain)
+  }
+
+  $master_principals = suffix(
+    prefix(
+      [$ipa_server_fqdn],
+      'host/'
+    ),
+    "@${final_realm}"
+  )
+
+  if $ipa::idstart {
+    $final_idstart = $idstart
+  } else {
+    $final_idstart = fqdn_rand('10737') + 10000
+  }
+
   class {'::ipa::validate_params':}
   -> class {'::ipa::install':}
-
-
 
 }

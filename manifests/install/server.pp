@@ -62,6 +62,8 @@ class ipa::install::server {
 
   if $ipa::ipa_role == 'master' {
     contain 'ipa::install::server::master'
+  } elsif $ipa::ipa_role == 'replica' {
+    contain 'ipa::install::server::replica'
   }
 
   service { 'ipa':

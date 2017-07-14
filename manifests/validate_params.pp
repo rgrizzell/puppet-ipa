@@ -27,7 +27,7 @@ class ipa::validate_params {
     fail('Parameter "domain" is not a valid domain name.')
   }
 
-  if ! is_domain_name($ipa::realm) {
+  if ! is_domain_name($ipa::final_realm) {
     fail('Parameter "realm" is not a valid domain name.')
   }
 

@@ -69,8 +69,10 @@ class ipa::config::admin_user {
     command => $k5start_admin_keytab_cmd,
     cwd     => $home_dir_path,
     unless  => $k5start_admin_keytab_cmd_unless,
-    notify  => Exec['chown_admin_keytab'],
-    require => Cron['k5start_admin'],
+    require => [
+      Cron['k5start_admin'],
+      Exec['chown_admin_keytab'],
+    ]
   }
 
   # Automatically refreshes admin keytab.

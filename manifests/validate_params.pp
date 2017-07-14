@@ -1,6 +1,15 @@
 # Validates input configs from init.pp.
 class ipa::validate_params {
 
+  if $ipa::manage_host_entry {
+    if !$ipa::ipa_server_fqdn {
+      fail('When using the parameter manage_host_entry, the parameter ipa_server_fqdn is mandatory.')
+    }
+    if !$ipa::ip_address {
+      fail('When using the parameter manage_host_entry, the parameter ip_address is mandatory.')
+    }
+  }
+
   if $ipa::idstart {
     validate_legacy(
       Optional[String],

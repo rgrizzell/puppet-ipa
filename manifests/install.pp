@@ -1,11 +1,11 @@
 #
 class ipa::install {
 
-  # # TODO: Ensure host entry
-  # host { $ipa::ipa_server_fqdn:
-  #   ip => '127.0.0.1',
-  #   host_aliases => 'localhost',
-  # }
+  if $ipa::manage_host_entry {
+    host { $ipa::ipa_server_fqdn:
+      ip => $ipa::ip_address,
+    }
+  }
 
   # TODO: sssd.conf
   # if $ipa::install_sssd {

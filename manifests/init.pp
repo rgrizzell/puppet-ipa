@@ -118,6 +118,7 @@ class ipa (
   $loadbalance             = false,
   $locality                = '',
   $location                = '',
+  $manage_host_entry       = false,
   $mkhomedir               = false,
   $one_time_password       = undef,
   $selfsign                = false,

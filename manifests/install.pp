@@ -40,7 +40,6 @@ class ipa::install {
     $dns_packages = [
       'ipa-server-dns',
       'bind-dyndb-ldap',
-      'ipa-server-dns',
     ]
     package{$dns_packages:
       ensure => present,

@@ -68,6 +68,19 @@
 #
 #
 # TODO: enable local host entry for hostname + ipaddress (for vagrant, for example).
+# TODO: exported resource for ipa_master_fqdn.
+#
+# TODO: ipa localhost redirect is a problem (localhost:8441 -> fqdn).
+# TODO: dns updates aren't working
+# TODO: allow changing of KrbMethodK5Passwd in /etc/httpd/conf.d/ipa.conf for username/pass
+# TODO: allow disable of webui redirect in /etc/httpd/conf.d/ipa-rewrite.conf.
+
+# TODO: ref on https proxy https://www.adelton.com/freeipa/freeipa-behind-proxy-with-different-name
+# TODO: another ref on https proxy: https://www.adelton.com/freeipa/freeipa-behind-ssl-proxy
+#
+# TODO: so, add another httpd conf for :8443, feature flagged, for vagrant Virtualbox that does a rewrite.
+# TODO: I think I'm going to need another VM just for the web ui proxy...
+
 class ipa (
   $admin_password,
   $directory_services_password,
@@ -78,8 +91,8 @@ class ipa (
   $cleanup                 = false,
   $client_description      = undef,
   $configure_automount     = false,
-  $configure_dns_server    = false,
-  $configure_ntp           = false,
+  $configure_dns_server    = true,
+  $configure_ntp           = true,
   $custom_dns_forwarders   = [],
   $debiansudopkg           = true,
   $dirsrv_pin              = undef,
@@ -121,6 +134,7 @@ class ipa (
   $loadbalance             = false,
   $locality                = '',
   $location                = '',
+  $ipa_master_fqdn         = undef,
   $manage_host_entry       = false,
   $mkhomedir               = false,
   $one_time_password       = undef,
@@ -158,13 +172,13 @@ class ipa (
   if $domain_join_principal {
     $final_domain_join_principal = $domain_join_principal
   } else {
-    $final_domain_join_principal = 'admin'
+    $final_domain_join_principal = 'admin'  #"admin@${final_realm}"
   }
 
   if $domain_join_password {
     $final_domain_join_password = $domain_join_password
   } else {
-    $final_domain_join_password = $admin_password
+    $final_domain_join_password = $directory_services_password
   }
 
   class {'::ipa::validate_params':}

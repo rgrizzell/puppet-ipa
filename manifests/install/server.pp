@@ -69,7 +69,7 @@ class ipa::install::server {
   service { 'ipa':
     ensure  => 'running',
     enable  => true,
-    require => Exec["serverinstall_${ipa::ipa_server_fqdn}"],
+    require => Exec["server_install_${ipa::ipa_server_fqdn}"],
   }
 
   if $ipa::install_sssd {

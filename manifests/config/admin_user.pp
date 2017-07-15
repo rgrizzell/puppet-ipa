@@ -19,7 +19,7 @@ class ipa::config::admin_user {
     group   => $uid_number,
     recurse => true,
     notify  => Exec['configure_admin_keytab'],
-    require => Exec["serverinstall_${ipa::ipa_server_fqdn}"],
+    require => Exec["server_install_${ipa::ipa_server_fqdn}"],
   }
 
   file { "${home_dir_path}/.k5login":

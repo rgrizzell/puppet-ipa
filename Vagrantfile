@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
             vb.customize ["modifyvm", :id, "--hpet", "on"]
         end
         box.vm.network "private_network", ip: "192.168.44.35"
+        box.vm.network "forwarded_port", guest: 8443, host: 8440
 
         $script = <<SCRIPT
 echo I am provisioning...
@@ -74,19 +75,26 @@ puppet module install puppet-selinux
 if [ -d /tmp/modules/ipa ]; then rm -rf /tmp/modules/ipa; fi
 mkdir -p /tmp/modules/ipa
 cp -r /vagrant/* /tmp/modules/ipa
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "class {'::ipa': \
- ipa_role => 'replica',\
- domain => 'vagrant.ipa.explorys.net',\
- ipa_server_fqdn => 'vagrant-ipa2.example.lan',\
- admin_password => 'vagrant123',\
- directory_services_password => 'vagrant123',\
- install_ipa_server => true,\
- ip_address => '192.168.44.36',\
- enable_ip_address => true,\
- enable_hostname => true,\
- manage_host_entry => true,\
- install_epel => true,\
-}"
+puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
+  host {'vagrant-ipa1.example.lan':\
+    ensure => present,\
+    ip => '192.168.44.35',\
+  }"
+puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
+  class {'::ipa': \
+    ipa_role => 'replica',\
+    domain => 'vagrant.ipa.explorys.net',\
+    ipa_server_fqdn => 'vagrant-ipa2.example.lan',\
+    admin_password => 'vagrant123',\
+    directory_services_password => 'vagrant123',\
+    install_ipa_server => true,\
+    ip_address => '192.168.44.36',\
+    enable_ip_address => true,\
+    enable_hostname => true,\
+    manage_host_entry => true,\
+    install_epel => true,\
+    ipa_master_fqdn => 'vagrant-ipa1.example.lan',\
+  }"
 SCRIPT
 
         box.vm.provision "shell", inline: $script

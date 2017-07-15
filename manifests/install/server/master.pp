@@ -34,7 +34,7 @@ class ipa::install::server::master {
     ensure  => 'file',
     content => 'Added by IPA Puppet module. Designates primary master. Do not remove.',
   }
-  -> exec { "serverinstall_${ipa::ipa_server_fqdn}":
+  -> exec { "server_install_${ipa::ipa_server_fqdn}":
     command   => $server_install_cmd,
     timeout   => 0,
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',

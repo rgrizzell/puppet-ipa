@@ -47,6 +47,13 @@ class ipa::validate_params {
     )
   }
 
+  # TODO: validate ipa_master_fqdn is a hostname.
+  if $ipa::ipa_role == 'replica' {
+    if !$ipa::ipa_master_fqdn {
+      fail('When creating a replica the parameter named ipa_master_fqdn cannot be empty.')
+    }
+  }
+
   # TODO: if $ipa_role == 'replica' then make sure hostname is in $replica_fqdn_list
   # TODO: make $final_replica_fqdn_list
 

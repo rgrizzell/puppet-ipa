@@ -80,6 +80,8 @@
 #
 # TODO: so, add another httpd conf for :8443, feature flagged, for vagrant Virtualbox that does a rewrite.
 # TODO: I think I'm going to need another VM just for the web ui proxy...
+#
+# TODO: Allow creation of root zone for isolated networks -- https://www.freeipa.org/page/Howto/DNS_in_isolated_networks
 
 class ipa (
   $admin_password,

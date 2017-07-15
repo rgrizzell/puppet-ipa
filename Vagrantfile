@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.define "vagrant-ipa1" do |box|
         box.vm.box = "bento/centos-7.3"
-        box.vm.hostname = 'vagrant-ipa1.example.lan'
+        box.vm.hostname = 'vagrant-ipa1.vagrant.example.lan'
         # Assign this VM to a host-only network IP, allowing you to access it
         # via the IP.
         box.vm.provider 'virtualbox' do |vb|
@@ -32,8 +32,8 @@ mkdir -p /tmp/modules/ipa
 cp -r /vagrant/* /tmp/modules/ipa
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "class {'::ipa': \
  ipa_role => 'master',\
- domain => 'vagrant.ipa.explorys.net',\
- ipa_server_fqdn => 'vagrant-ipa1.example.lan',\
+ domain => 'vagrant.example.lan',\
+ ipa_server_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
  admin_password => 'vagrant123',\
  directory_services_password => 'vagrant123',\
  install_ipa_server => true,\
@@ -50,7 +50,7 @@ SCRIPT
 
     config.vm.define "vagrant-ipa2" do |box|
         box.vm.box = "bento/centos-7.3"
-        box.vm.hostname = 'vagrant-ipa2.example.lan'
+        box.vm.hostname = 'vagrant-ipa2.vagrant.example.lan'
         # Assign this VM to a host-only network IP, allowing you to access it
         # via the IP.
         box.vm.provider 'virtualbox' do |vb|
@@ -83,8 +83,8 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
   class {'::ipa': \
     ipa_role => 'replica',\
-    domain => 'vagrant.ipa.explorys.net',\
-    ipa_server_fqdn => 'vagrant-ipa2.example.lan',\
+    domain => 'vagrant.example.lan',\
+    ipa_server_fqdn => 'vagrant-ipa2.vagrant.example.lan',\
     admin_password => 'vagrant123',\
     directory_services_password => 'vagrant123',\
     install_ipa_server => true,\
@@ -93,7 +93,7 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
     enable_hostname => true,\
     manage_host_entry => true,\
     install_epel => true,\
-    ipa_master_fqdn => 'vagrant-ipa1.example.lan',\
+    ipa_master_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
   }"
 SCRIPT
 

@@ -36,7 +36,8 @@ class ipa::install {
     }
   }
 
-  if $ipa::configure_dns_server {
+  # TODO: Validate role != client and configure_dns_server == true
+  if $ipa::final_configure_dns_server {
     $dns_packages = [
       'ipa-server-dns',
       'bind-dyndb-ldap',
@@ -50,8 +51,8 @@ class ipa::install {
     contain 'ipa::install::server'
   }
 
-  # if $ipa::install_ipa_client {
-  #   contain 'ipa::install::client'
-  # }
+  if $ipa::install_ipa_client or $ipa::ipa_role == 'client' {
+    contain 'ipa::install::client'
+  }
 
 }

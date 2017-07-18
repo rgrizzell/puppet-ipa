@@ -28,6 +28,7 @@ class ipa::install::server::master {
   ${ipa::install::server::server_install_cmd_opts_no_ntp} \
   ${ipa::install::server::server_install_cmd_opts_external_ca} \
   ${ipa::install::server::server_install_cmd_opts_idstart} \
+  ${ipa::install::server::server_install_cmd_opts_no_ui_redirect} \
   --unattended"
 
   file { '/etc/ipa/primary':

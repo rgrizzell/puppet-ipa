@@ -31,7 +31,7 @@ class ipa::install::server {
     $server_install_cmd_opts_external_ca = ''
   }
 
-  if $ipa::configure_dns_server {
+  if $ipa::final_configure_dns_server {
     $server_install_cmd_opts_setup_dns = '--setup-dns'
   } else {
     $server_install_cmd_opts_setup_dns = ''
@@ -43,7 +43,7 @@ class ipa::install::server {
     $server_install_cmd_opts_no_ntp = '--no-ntp'
   }
 
-  if $ipa::configure_dns_server {
+  if $ipa::final_configure_dns_server {
     if size($ipa::custom_dns_forwarders) > 0 {
       $server_install_cmd_opts_forwarders = join(
         prefix(
@@ -58,6 +58,12 @@ class ipa::install::server {
   }
   else {
     $server_install_cmd_opts_forwarders = ''
+  }
+
+  if $ipa::no_ui_redirect {
+    $server_install_cmd_opts_no_ui_redirect = ''
+  } else {
+    $server_install_cmd_opts_no_ui_redirect = '--no-ui-redirect'
   }
 
   if $ipa::ipa_role == 'master' {

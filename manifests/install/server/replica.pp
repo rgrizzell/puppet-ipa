@@ -104,6 +104,7 @@ class ipa::install::server::replica {
   ${ipa::install::server::server_install_cmd_opts_ip_address} \
   ${ipa::install::server::server_install_cmd_opts_no_ntp} \
   ${ipa::install::server::server_install_cmd_opts_external_ca} \
+  ${ipa::install::server::server_install_cmd_opts_no_ui_redirect} \
   --unattended"
 
   # TODO: config-show and grep for IPA\ masters

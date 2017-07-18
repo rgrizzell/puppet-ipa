@@ -72,13 +72,18 @@ puppet module install puppetlabs-concat
 puppet module install puppetlabs-stdlib
 puppet module install crayfishx-firewalld
 puppet module install puppet-selinux
+puppet module install saz-resolv_conf
 if [ -d /tmp/modules/ipa ]; then rm -rf /tmp/modules/ipa; fi
 mkdir -p /tmp/modules/ipa
 cp -r /vagrant/* /tmp/modules/ipa
+#puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
+#  host {'vagrant-ipa1.example.lan':\
+#    ensure => present,\
+#    ip => '192.168.44.35',\
+#  }"
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  host {'vagrant-ipa1.example.lan':\
-    ensure => present,\
-    ip => '192.168.44.35',\
+  class { 'resolv_conf':\
+    nameservers => ['192.168.44.35'],\
   }"
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
   class {'::ipa': \

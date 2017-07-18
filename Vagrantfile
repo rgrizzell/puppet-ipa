@@ -31,18 +31,21 @@ puppet module install puppet-selinux
 if [ -d /tmp/modules/ipa ]; then rm -rf /tmp/modules/ipa; fi
 mkdir -p /tmp/modules/ipa
 cp -r /vagrant/* /tmp/modules/ipa
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "class {'::ipa': \
- ipa_role => 'master',\
- domain => 'vagrant.example.lan',\
- ipa_server_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
- admin_password => 'vagrant123',\
- directory_services_password => 'vagrant123',\
- install_ipa_server => true,\
- ip_address => '192.168.44.35',\
- enable_ip_address => true,\
- enable_hostname => true,\
- manage_host_entry => true,\
- install_epel => true,\
+puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
+  class {'::ipa': \
+    ipa_role => 'master',\
+    domain => 'vagrant.example.lan',\
+    ipa_server_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
+    admin_password => 'vagrant123',\
+    directory_services_password => 'vagrant123',\
+    install_ipa_server => true,\
+    ip_address => '192.168.44.35',\
+    enable_ip_address => true,\
+    enable_hostname => true,\
+    manage_host_entry => true,\
+    install_epel => true,\
+    webui_additional_http_port => 8000,\
+    webui_additional_https_port => 8440,\
 }"
 SCRIPT
 

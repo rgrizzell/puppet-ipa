@@ -72,6 +72,14 @@ class ipa::install::server {
     contain 'ipa::install::server::replica'
   }
 
+  ensure_resource (
+    'service',
+    'httpd',
+    {ensure => 'running'},
+  )
+
+  contain 'ipa::config::webui'
+
   service { 'ipa':
     ensure  => 'running',
     enable  => true,

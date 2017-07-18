@@ -149,6 +149,9 @@ class ipa (
   $sudo                        = false,
   $sudopw                      = undef,
   $use_external_ca             = false,
+  $webui_additional_http_port  = undef,
+  $webui_additional_https_port = undef,
+  $webui_custom_port_listeners = false,
 ) {
 
   # TODO: move to params.pp

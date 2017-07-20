@@ -57,4 +57,5 @@ class ipa::validate_params {
   # TODO: if $ipa_role == 'replica' then make sure hostname is in $replica_fqdn_list
   # TODO: make $final_replica_fqdn_list
 
+  # TODO: if $webui_proxy_https_port then it can't be 443.
 }

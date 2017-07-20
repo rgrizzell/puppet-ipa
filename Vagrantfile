@@ -44,10 +44,13 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
     enable_hostname => true,\
     manage_host_entry => true,\
     install_epel => true,\
-    webui_additional_http_port => 8000,\
-    webui_additional_https_port => 8440,\
+    webui_disable_kerberos => true,\
+    webui_enable_proxy => true,\
+    webui_force_https => true,\
 }"
 SCRIPT
+
+#    webui_redirect_fqdn => 'localhost',\
 
         box.vm.provision "shell", inline: $script
     end

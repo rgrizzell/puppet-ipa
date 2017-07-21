@@ -13,8 +13,7 @@
 
 #
 class ipa::install::server::master {
-  ## Install
-
+  # Install
   $server_install_cmd = "\
 /usr/sbin/ipa-server-install \
   ${ipa::install::server::server_install_cmd_opts_hostname} \
@@ -51,89 +50,4 @@ class ipa::install::server::master {
     require => Package[$ipa::kstart_package_name],
   }
 
-  # File['/etc/ipa/primary']
-  # -> class {'ipa::host_add':}
-  # -> class {'ipa::replica_prepare':}
-  # -> Ipa::Createreplicas[$ipa::ipa_server_fqdn]
-  #
-  # Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::domain}" |>>
-  # class {'ipa::hostadd':}
-
-  # if $ipa::install_kstart {
-  #   realize Package[$ipa::kstart_package_name]
-  #   # TODO: Why?? -- to allow scp to/from replicas as root
-
-  # }
-
-  # if $extca {
-  #   class { 'ipa::master_extca':
-  #     extcertpath   => $ipa::master::extcertpath,
-  #     extcert       => $ipa::master::extcert,
-  #     extcacertpath => $ipa::master::extcacertpath,
-  #     extcacert     => $ipa::master::extcacert,
-  #     dirsrv_pkcs12 => $ipa::master::dirsrv_pkcs12,
-  #     http_pkcs12   => $ipa::master::http_pkcs12,
-  #     dirsrv_pin    => $ipa::master::dirsrv_pin,
-  #     http_pin      => $ipa::master::http_pin,
-  #     subject       => $ipa::master::subject,
-  #     selfsign      => $ipa::master::selfsign,
-  #     require       => Ipa::Serverinstall[$::fqdn]
-  #   }
-  # } else {
-  #   class { 'ipa::service':
-  #     require => Ipa::Serverinstall[$::fqdn]
-  #   }
-  # }
-
-  # ipa::createreplicas { $::fqdn:
-  # }
-  #
-  # if $ipa::enable_firewall {
-  #   firewall { '101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
-  #     ensure => 'present',
-  #     action => 'accept',
-  #     proto  => 'tcp',
-  #     dport  => ['80','88','389','443','464','636']
-  #   }
-  #
-  #   firewall { '102 allow IPA master UDP services (kerberos,kpasswd,ntp)':
-  #     ensure => 'present',
-  #     action => 'accept',
-  #     proto  => 'udp',
-  #     dport  => ['88','123','464']
-  #   }
-  #
-  #   @@ipa::replicapreparefirewall { $::fqdn:
-  #     source => $::ipaddress,
-  #     tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
-  #   }
-  #
-  #   @@ipa::masterreplicationfirewall { $::fqdn:
-  #     source => $::ipaddress,
-  #     tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
-  #   }
-  #
-  #   @@ipa::masterprincipal { $::fqdn:
-  #     realm => $ipa::master::realm,
-  #     tag   => "ipa-master-principal-${ipa::master::domain}"
-  #   }
-  # }
-
-  # @@ipa::clientinstall { $::fqdn:
-  #   masterfqdn => $::fqdn,
-  #   domain     => $ipa::master::domain,
-  #   realm      => $ipa::master::realm,
-  #   adminpw    => $ipa::master::adminpw,
-  #   otp        => '',
-  #   mkhomedir  => '',
-  #   ntp        => ''
-  # }
-#   if $ipa::master::loadbalance {
-#     ipa::loadbalanceconf { "master-${::fqdn}":
-#       domain     => $ipa::master::domain,
-#       ipaservers => $ipa::master::ipaservers,
-#       mkhomedir  => $ipa::master::mkhomedir,
-#       require    => Ipa::Serverinstall[$::fqdn]
-#     }
-#   }
 }

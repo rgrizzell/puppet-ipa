@@ -25,11 +25,11 @@ class ipa::install::server {
     $server_install_cmd_opts_ip_address = ''
   }
 
-  if $ipa::use_external_ca {
-    $server_install_cmd_opts_external_ca = '--external-ca'
-  } else {
-    $server_install_cmd_opts_external_ca = ''
-  }
+  # if $ipa::use_external_ca {
+  #   $server_install_cmd_opts_external_ca = '--external-ca'
+  # } else {
+  #   $server_install_cmd_opts_external_ca = ''
+  # }
 
   if $ipa::final_configure_dns_server {
     $server_install_cmd_opts_setup_dns = '--setup-dns'

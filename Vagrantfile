@@ -2,9 +2,9 @@
 
 Vagrant.configure("2") do |config|
 
-    config.vm.define "vagrant-ipa1" do |box|
+    config.vm.define "ipa-server-1" do |box|
         box.vm.box = "bento/centos-7.3"
-        box.vm.hostname = 'vagrant-ipa1.vagrant.example.lan'
+        box.vm.hostname = 'ipa-server-1.vagrant.example.lan'
         # Assign this VM to a host-only network IP, allowing you to access it
         # via the IP.
         box.vm.provider 'virtualbox' do |vb|
@@ -32,10 +32,10 @@ if [ -d /tmp/modules/ipa ]; then rm -rf /tmp/modules/ipa; fi
 mkdir -p /tmp/modules/ipa
 cp -r /vagrant/* /tmp/modules/ipa
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class {'::ipa': \
+  class {'::ipa':\
     ipa_role => 'master',\
     domain => 'vagrant.example.lan',\
-    ipa_server_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
+    ipa_server_fqdn => 'ipa-server-1.vagrant.example.lan',\
     admin_password => 'vagrant123',\
     directory_services_password => 'vagrant123',\
     install_ipa_server => true,\
@@ -50,14 +50,12 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
 }"
 SCRIPT
 
-#    webui_redirect_fqdn => 'localhost',\
-
         box.vm.provision "shell", inline: $script
     end
 
-    config.vm.define "vagrant-ipa2" do |box|
+    config.vm.define "ipa-server-2" do |box|
         box.vm.box = "bento/centos-7.3"
-        box.vm.hostname = 'vagrant-ipa2.vagrant.example.lan'
+        box.vm.hostname = 'ipa-server-2.vagrant.example.lan'
         # Assign this VM to a host-only network IP, allowing you to access it
         # via the IP.
         box.vm.provider 'virtualbox' do |vb|
@@ -88,21 +86,28 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
     nameservers => ['192.168.44.35'],\
   }"
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class {'::ipa': \
+  host {'ipa-server-1.vagrant.example.lan':\
+    ensure => present,\
+    ip => '192.168.44.35',\
+  }"
+puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
+  class {'::ipa':\
     ipa_role => 'replica',\
     domain => 'vagrant.example.lan',\
-    ipa_server_fqdn => 'vagrant-ipa2.vagrant.example.lan',\
-    admin_password => 'vagrant123',\
-    directory_services_password => 'vagrant123',\
+    ipa_server_fqdn => 'ipa-server-2.vagrant.example.lan',\
+    domain_join_password => 'vagrant123',\
     install_ipa_server => true,\
     ip_address => '192.168.44.36',\
     enable_ip_address => true,\
     enable_hostname => true,\
     manage_host_entry => true,\
     install_epel => true,\
-    ipa_master_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
+    ipa_master_fqdn => 'ipa-server-1.vagrant.example.lan',\
   }"
+
 SCRIPT
+
+#     admin_password => 'vagrant123',\
 
         box.vm.provision "shell", inline: $script
     end
@@ -140,12 +145,12 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
     nameservers => ['192.168.44.35'],\
   }"
 puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class {'::ipa': \
+  class {'::ipa':\
     ipa_role => 'client',\
     domain => 'vagrant.example.lan',\
     domain_join_password => 'vagrant123',\
     install_epel => true,\
-    ipa_master_fqdn => 'vagrant-ipa1.vagrant.example.lan',\
+    ipa_master_fqdn => 'ipa-server-1.vagrant.example.lan',\
   }"
 SCRIPT
 

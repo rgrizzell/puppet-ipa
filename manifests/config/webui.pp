@@ -7,6 +7,8 @@ class ipa::config::webui {
     $proxy_server_external_fqdn = $ipa::webui_proxy_external_fqdn
     $proxy_https_port = $ipa::webui_proxy_https_port
 
+    $proxy_server_external_fqdn_and_port = "${proxy_server_external_fqdn}:${proxy_https_port}"
+
     $proxy_internal_uri = "https://${proxy_server_internal_fqdn}"
     $proxy_external_uri = "https://${proxy_server_external_fqdn}:${proxy_https_port}"
     $proxy_server_name = "https://${ipa::ipa_server_fqdn}:${proxy_https_port}"
@@ -42,33 +44,49 @@ class ipa::config::webui {
   }
 
   if $ipa::webui_disable_kerberos {
-    $lines_to_comment = [
-      'AuthType GSSAPI',
-      'AuthName "Kerberos Login"',
-      'GssapiCredStore keytab:/etc/httpd/conf/ipa.keytab',
-      'GssapiCredStore client_keytab:/etc/httpd/conf/ipa.keytab',
-      'GssapiDelegCcacheDir /var/run/httpd/ipa/clientcaches',
-      'GssapiDelegCcacheUnique On',
-      'GssapiUseS4U2Proxy on',
-      'GssapiAllowedMech krb5',
-      'Require valid-user',
-      'ErrorDocument 401 /ipa/errors/unauthorized.html',
-    ]
+    # $lines_to_comment = [
+    #   'AuthType GSSAPI',
+    #   'AuthName "Kerberos Login"',
+    #   'GssapiCredStore keytab:/etc/httpd/conf/ipa.keytab',
+    #   'GssapiCredStore client_keytab:/etc/httpd/conf/ipa.keytab',
+    #   'GssapiDelegCcacheDir /var/run/httpd/ipa/clientcaches',
+    #   'GssapiDelegCcacheUnique On',
+    #   'GssapiUseS4U2Proxy on',
+    #   'GssapiAllowedMech krb5',
+    #   'Require valid-user',
+    #   'ErrorDocument 401 /ipa/errors/unauthorized.html',
+    # ]
 
-    $lines_to_comment.each | $index, $cur_line | {
-      $match_str = regsubst(
-        $cur_line,
-        ' ',
-        '\ ',
-        'G',
-      )
-      file_line{"disable_kerberos_${index}":
-        ensure => present,
-        path   => '/etc/httpd/conf.d/ipa.conf',
-        line   => "# ${cur_line}",
-        match  => $match_str,
-        notify => Service['httpd'],
-      }
+    # $lines_to_comment.each | $index, $cur_line | {
+    #   $match_str = regsubst(
+    #     $cur_line,
+    #     ' ',
+    #     '\ ',
+    #     'G',
+    #   )
+    #   file_line{"disable_kerberos_${index}":
+    #     ensure => present,
+    #     path   => '/etc/httpd/conf.d/ipa.conf',
+    #     line   => "# ${cur_line}",
+    #     match  => $match_str,
+    #     notify => Service['httpd'],
+    #   }
+    # }
+
+    file_line{'disable_kerberos_via_if_1':
+      ensure => present,
+      path   => '/etc/httpd/conf.d/ipa.conf',
+      line   => "  <If \"%{HTTP_HOST} != '${proxy_server_external_fqdn_and_port}'\">",
+      notify => Service['httpd'],
+      after  => '<Location\ "/ipa">',
+    }
+
+    file_line{'disable_kerberos_via_if_2':
+      ensure => present,
+      path   => '/etc/httpd/conf.d/ipa.conf',
+      line   => "  </If>",
+      notify => Service['httpd'],
+      after  => 'ErrorDocument\ 401\ /ipa/errors/unauthorized.html',
     }
 
   }

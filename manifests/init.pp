@@ -2,69 +2,135 @@
 #
 # Manages IPA masters, replicas and clients.
 #
-# === Parameters
+# Parameters
+# ----------
+# `domain`
+#      (string) The name of the IPA domain to create or join.
+# `ipa_role`
+#      (string) What role the node will be. Options are 'master', 'replica', and 'client'.
 #
+# `admin_password`
+#      (string) Password which will be assigned to the IPA account named 'admin'.
 #
-#  ipa_role
-#    Should be set to 'master', 'replica', or 'client'. Master and replica is a bit of a misnomer, since replicas
-#    become masters after they are installed. Use 'master' for the first server creating the IPA domain.
+# `directory_services_password`
+#      (string) Password which will be passed into the ipa setup's parameter named "--ds-password".
 #
-#  $client = false - Configures a server to be an IPA client.
-#  $cleanup = false - Removes IPA specific packages.
-#  $domain = undef - Defines the LDAP domain.
-#  $realm = undef - Defines the Kerberos realm.
-#  $adminpw = undef - Defines the IPA administrative user password.
-#  $dspw = undef - Defines the IPA directory services password.
-#  $otp = undef - Defines an IPA client one-time-password.
-#  $dns = false - Controls the option to configure a DNS zone with the IPA master setup.
-#  $ip_address = undef -  Specifies the IP address of the server.
-#  $fixedprimary = false - Configure sssd to use a fixed server as the primary IPA server.
-#  $forwarders = [] - Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
-#  $extca = false - Controls the option to configure an external CA.
-#  $extcertpath = undef - Defines a file path to the external certificate file. Somewhere under /root is recommended.
-#  $extcert = undef - The X.509 certificate in base64 encoded format.
-#  $extcacertpath = undef - Defines a file path to the external CA certificate file. Somewhere under /root is recommended.
-#  $extcacert = undef - The X.509 CA certificate in base64 encoded format.
-#  $dirsrv_pkcs12 = undef - PKCS#12 file containing the Directory Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
-#  $http_pkcs12 = undef - The PKCS#12 file containing the Apache Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
-#  $dirsrv_pin = undef - The password of the Directory Server PKCS#12 file.
-#  $http_pin = undef - The password of the Apache Server PKCS#12 file.
-#  $subject = undef - The certificate subject base.
-#  $selfsign = false - Configure a self-signed CA instance for issuing server certificates instead of using dogtag for certificates.
-#  $loadbalance = false - Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
-#  $ipaservers = [] - Defines an array of additional hostnames to be used in a load balanced IPA client configuration.
-#  $mkhomedir = false - Controls the option to create user home directories on first login.
-#  $ntp = false - Controls the option to configure NTP on a client.
-#  $kstart = true - Controls the installation of kstart.
-#  $desc = '' - Controls the description entry of an IPA client.
-#  $locality = '' - Controls the locality entry of an IPA client.
-#  $location = '' - Controls the location entry of an IPA client.
-#  $sssdtools = true - Controls the installation of the SSSD tools package.
-#  $sssdtoolspkg = 'sssd-tools' - SSSD tools package.
-#  $sssd = true - Controls the option to start the SSSD service.
-#  $sudo = false - Controls the option to configure sudo in LDAP.
-#  $sudopw = undef - Defines the sudo user bind password.
-#  $debiansudopkg = true - Controls the installation of the Debian sudo-ldap package.
-#  $automount = false - Controls the option to configure automounter maps in LDAP.
-#  $autofs = false - Controls the option to start the autofs service and install the autofs package.
-#  $svrpkg = 'ipa-server' - IPA server package.
-#  $clntpkg = 'ipa-client' - IPA client package.
-#  $ldaputils = true - Controls the instalation of the LDAP utilities package.
-#  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
-#  $enable_firewall = true - Install and Configure iptables ? this is not desired for docker container 
-#  $enable_hostname = true - Configure hostname during instalation? this is not desired for docker container
+# `autofs_package_name`
+#      (string) Name of the autofs package to install if enabled.
 #
-# === Variables
+# `configure_dns_server`
+#      (boolean) If true, then the parameter '--setup-dns' is passed to the IPA server installer.
+#                Also, triggers the install of the required dns server packages.
 #
+# `configure_ntp`
+#      (boolean) If false, then the parameter '--no-ntp' is passed to the IPA server installer.
 #
-# === Examples
+# `custom_dns_forwarders`
+#      (array[string]) Each element in this array is prefixed with '--forwarder '
+#                      and passed to the IPA server installer.
 #
+# `domain_join_principal`
+#      (string) The principal (usually username) used to join a client or replica to the IPA domain.
 #
-# === Authors
+# `domain_join_password`
+#      (string) The password for the domain_join_principal.
 #
+# `enable_hostname`
+#      (boolean) If true, then the parameter '--hostname' is populated with the parameter 'ipa_server_fqdn'
+#                and passed to the IPA installer.
 #
-# === Copyright
+# `enable_ip_address`
+#      (boolean) If true, then the parameter '--ip-address' is populated with the parameter 'ip_address'
+#                and passed to the IPA installer.
 #
+# `fixed_primary`
+#      (boolean) If true, then the parameter '--fixed-primary' is passed to the IPA installer.
+#
+# `idstart`
+#      (integer) From the IPA man pages: "The starting user and group id number".
+#
+# `install_autofs`
+#      (boolean) If true, then the autofs packages are installed.
+# `install_epel`
+#      (boolean) If true, then the epel repo is installed. The epel repo is usually required for sssd packages.
+#
+# `install_kstart`
+#      (boolean) If true, then the kstart packages are installed.
+#
+# `install_ldaputils`
+#      (boolean) If true, then the ldaputils packages are installed.
+#
+# `install_sssdtools`
+#      (boolean) If true, then the sssdtools packages are installed.
+#
+# `ipa_client_package_name`
+#      (string) Name of the IPA client package.
+#
+# `ipa_server_package_name`
+#      (string) Name of the IPA server package.
+#
+# `install_ipa_client`
+#      (boolean) If true, then the IPA client packages are installed if the parameter 'ipa_role' is set to 'client'.
+#
+# `install_ipa_server`
+#      (boolean) If true, then the IPA server packages are installed if the parameter 'ipa_role' is not set to 'client'.
+#
+# `install_sssd`
+#      (boolean) If true, then the sssd packages are installed.
+#
+# `ip_address`
+#      (string) IP address to pass to the IPA installer.
+#
+# `ipa_server_fqdn`
+#      (string) Actual fqdn of the IPA server or client.
+#
+# `kstart_package_name`
+#      (string) Name of the kstart package.
+#
+# `ldaputils_package_name`
+#      (string) Name of the ldaputils package.
+#
+# `ipa_master_fqdn`
+#      (string) FQDN of the server to use for a client or replica domain join.
+#
+# `manage_host_entry`
+#      (boolean) If true, then a host entry is created using the parameters 'ipa_server_fqdn' and 'ip_address'.
+#
+# `mkhomedir`
+#      (boolean) If true, then the parameter '--mkhomedir' is passed to the IPA client installer.
+#
+# `no_ui_redirect`
+#      (boolean) If true, then the parameter '--no-ui-redirect' is passed to the IPA server installer.
+#
+# `realm`
+#      (string) The name of the IPA realm to create or join.
+#
+# `sssd_package_name`
+#      (string) Name of the sssd package.
+#
+# `sssdtools_package_name`
+#      (string) Name of the sssdtools package.
+#
+# `webui_disable_kerberos`
+#      (boolean) If true, then /etc/httpd/conf.d/ipa.conf is written to exclude kerberos support for
+#                incoming requests whose HTTP_HOST variable match the parameter 'webio_proxy_external_fqdn'.
+#                This allows the IPA Web UI to work on a proxied port, while allowing IPA client access to
+#                function as normal.
+#
+# `webui_enable_proxy`
+#      (boolean) If true, then httpd is configured to act as a reverse proxy for the IPA Web UI. This allows
+#                for the Web UI to be accessed from different ports and hostnames than the default.
+#
+# `webui_force_https`
+#      (boolean) If true, then /etc/httpd/conf.d/ipa-rewrite.conf is modified to force all connections to https.
+#                This is necessary to allow the WebUI to be accessed behind a reverse proxy when using nonstandard
+#                ports.
+#
+# `webui_proxy_external_fqdn`
+#      (string) The public or external FQDN used to access the IPA Web UI behind the reverse proxy.
+#
+# `webui_proxy_https_port`
+#      (integer) The HTTPS port to use for the reverse proxy. Cannot be 443.
 #
 # TODO: enable local host entry for hostname + ipaddress (for vagrant, for example).
 # TODO: exported resource for ipa_master_fqdn.
@@ -90,27 +156,14 @@ class ipa (
   $admin_password                     = undef,
   $directory_services_password        = undef,
   $autofs_package_name                = 'autofs',
-  #$cleanup                            = false,
-  $client_description                 = undef,
-  #$configure_automount                = false,
   $configure_dns_server               = true,
   $configure_ntp                      = true,
   $custom_dns_forwarders              = [],
-  #$debiansudopkg                      = true,
-  #$dirsrv_pin                         = undef,
-  #$dirsrv_pkcs12                      = undef,
   $domain_join_principal              = undef,
   $domain_join_password               = undef,
-  $enable_firewall                    = true,
   $enable_hostname                    = true,
   $enable_ip_address                  = false,
-  #$extcacert                          = undef,
-  #$extcertpath                        = undef,
-  #$extcert                            = undef,
-  #$external_ca_server_file            = undef,
   $fixed_primary                      = false,
-  #$http_pkcs12                        = undef,
-  #$http_pin                           = undef,
   $idstart                            = undef,
   $install_autofs                     = false,
   $install_epel                       = true,
@@ -122,7 +175,6 @@ class ipa (
     default  => 'ipa-client',
   },
   $ipa_server_package_name            = 'ipa-server',
-  #$ipaservers                         = [],
   $install_ipa_client                 = false,
   $install_ipa_server                 = false,
   $install_sssd                       = true,
@@ -133,23 +185,13 @@ class ipa (
     'Debian' => 'ldap-utils',
     default  => 'openldap-clients',
   },
-  #$loadbalance                        = false,
-  #$locality                           = '',
-  #$location                           = '',
   $ipa_master_fqdn                    = undef,
   $manage_host_entry                  = false,
   $mkhomedir                          = true,
   $no_ui_redirect                     = false,
-  #$one_time_password                  = undef,
   $realm                              = undef,
-  #$replica_fqdn_list                  = [],
-  #$selfsign                           = false,
   $sssd_package_name                  = 'sssd-common',
   $sssdtools_package_name             = 'sssd-tools',
-  #$subject                            = undef,
-  #$sudo                               = false,
-  #$sudopw                             = undef,
-  #$use_external_ca                    = false,
   $webui_disable_kerberos             = false,
   $webui_enable_proxy                 = false,
   $webui_force_https                  = false,
@@ -181,7 +223,7 @@ class ipa (
   if $domain_join_principal {
     $final_domain_join_principal = $domain_join_principal
   } else {
-    $final_domain_join_principal = 'admin'  #"admin@${final_realm}"
+    $final_domain_join_principal = 'admin'
   }
 
   if $domain_join_password {

@@ -1,4 +1,4 @@
-# configures port and redirect overrides for the IPA server web UI.
+# Configures port and redirect overrides for the IPA server web UI.
 class ipa::config::webui {
 
   if $ipa::webui_enable_proxy {
@@ -40,39 +40,9 @@ class ipa::config::webui {
       content => template('ipa/ipa-webui-proxy.conf.erb'),
       notify  => Service['httpd'],
     }
-
   }
 
   if $ipa::webui_disable_kerberos {
-    # $lines_to_comment = [
-    #   'AuthType GSSAPI',
-    #   'AuthName "Kerberos Login"',
-    #   'GssapiCredStore keytab:/etc/httpd/conf/ipa.keytab',
-    #   'GssapiCredStore client_keytab:/etc/httpd/conf/ipa.keytab',
-    #   'GssapiDelegCcacheDir /var/run/httpd/ipa/clientcaches',
-    #   'GssapiDelegCcacheUnique On',
-    #   'GssapiUseS4U2Proxy on',
-    #   'GssapiAllowedMech krb5',
-    #   'Require valid-user',
-    #   'ErrorDocument 401 /ipa/errors/unauthorized.html',
-    # ]
-
-    # $lines_to_comment.each | $index, $cur_line | {
-    #   $match_str = regsubst(
-    #     $cur_line,
-    #     ' ',
-    #     '\ ',
-    #     'G',
-    #   )
-    #   file_line{"disable_kerberos_${index}":
-    #     ensure => present,
-    #     path   => '/etc/httpd/conf.d/ipa.conf',
-    #     line   => "# ${cur_line}",
-    #     match  => $match_str,
-    #     notify => Service['httpd'],
-    #   }
-    # }
-
     file_line{'disable_kerberos_via_if_1':
       ensure => present,
       path   => '/etc/httpd/conf.d/ipa.conf',
@@ -88,7 +58,5 @@ class ipa::config::webui {
       notify => Service['httpd'],
       after  => 'ErrorDocument\ 401\ /ipa/errors/unauthorized.html',
     }
-
   }
-
 }

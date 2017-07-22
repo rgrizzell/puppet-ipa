@@ -1,14 +1,4 @@
-# Class: ipa::replica
-#
-# This class configures an IPA replica
-#
-# Parameters:
-#
-# Actions:
-#
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
-#
-# Sample Usage:
+# Class: ipa::install::server::replica
 #
 class ipa::install::server::replica {
 

@@ -1,6 +1,6 @@
 define ipa::helpers::flushcache {
 
-  #TODO: I'm pretty sure that nscd should be called on both
+  #TODO: I'm pretty sure that nscd should be called on both platforms.
   if $::osfamily == 'RedHat' {
     $ipa_fluch_cache_cmd = "\
 if [ -x /usr/sbin/sss_cache ]; then \

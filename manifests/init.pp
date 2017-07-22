@@ -51,6 +51,7 @@
 #
 # `install_autofs`
 #      (boolean) If true, then the autofs packages are installed.
+#
 # `install_epel`
 #      (boolean) If true, then the epel repo is installed. The epel repo is usually required for sssd packages.
 #
@@ -132,23 +133,13 @@
 # `webui_proxy_https_port`
 #      (integer) The HTTPS port to use for the reverse proxy. Cannot be 443.
 #
-# TODO: enable local host entry for hostname + ipaddress (for vagrant, for example).
-# TODO: exported resource for ipa_master_fqdn.
-#
-# TODO: ipa localhost redirect is a problem (localhost:8441 -> fqdn).
-# TODO: dns updates aren't working
-# TODO: allow changing of KrbMethodK5Passwd in /etc/httpd/conf.d/ipa.conf for username/pass
-# TODO: allow disable of webui redirect in /etc/httpd/conf.d/ipa-rewrite.conf.
-
-# TODO: ref on https proxy https://www.adelton.com/freeipa/freeipa-behind-proxy-with-different-name
-# TODO: another ref on https proxy: https://www.adelton.com/freeipa/freeipa-behind-ssl-proxy
-#
-# TODO: so, add another httpd conf for :8443, feature flagged, for vagrant Virtualbox that does a rewrite.
-# TODO: I think I'm going to need another VM just for the web ui proxy...
-#
 # TODO: Allow creation of root zone for isolated networks -- https://www.freeipa.org/page/Howto/DNS_in_isolated_networks
-#
-# TODO: Secure flag removal of login cookie _or_ https:// binding via NSSEngine to :8000.
+# TODO: Class comments.
+# TODO: Dependencies and metadata updates.
+# TODO: Linting
+# TODO: Spec tests
+# TODO: variable scoping and passing
+# TODO: ditch the facter facts
 #
 class ipa (
   $domain,

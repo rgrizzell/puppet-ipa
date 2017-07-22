@@ -1,11 +1,12 @@
 require 'rubygems'
-require 'rake'
-require 'rspec/core/rake_task'
 require 'puppetlabs_spec_helper/rake_tasks'
-require 'puppet-lint'
-
-PuppetLint.configuration.ignore_paths = ["pkg/**/*.pp", "tests/*.pp"]
+require 'puppet-lint/tasks/puppet-lint'
 PuppetLint.configuration.send('disable_80chars')
-PuppetLint.configuration.send('disable_documentation')
+PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
+
+# Forsake support for Puppet 2.6.2 for the benefit of cleaner code.
+# http://puppet-lint.com/checks/class_inherits_from_params_class/
 PuppetLint.configuration.send('disable_class_inherits_from_params_class')
-task :default => [:spec, :lint]
+
+desc "Run all tests"
+task :test => [:lint, :validate, :spec]

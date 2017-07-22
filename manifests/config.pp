@@ -1,3 +1,3 @@
 # for loading
-class ipa::config {
+class easy_ipa::config {
 }

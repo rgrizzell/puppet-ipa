@@ -1,7 +1,7 @@
 #
-class ipa::install {
+class easy_ipa::install {
 
-  if $ipa::install_epel {
+  if $easy_ipa::install_epel {
     ensure_resource(
       'package',
       'epel-release',
@@ -9,35 +9,35 @@ class ipa::install {
     )
   }
 
-  if $ipa::manage_host_entry {
-    host { $ipa::ipa_server_fqdn:
-      ip => $ipa::ip_address,
+  if $easy_ipa::manage_host_entry {
+    host { $easy_ipa::ipa_server_fqdn:
+      ip => $easy_ipa::ip_address,
     }
   }
 
   # Note: sssd.conf handled by ipa-server-install.
-  if $ipa::install_sssd {
-    contain 'ipa::install::sssd'
+  if $easy_ipa::install_sssd {
+    contain 'easy_ipa::install::sssd'
   }
 
-  if $ipa::install_autofs {
-    contain 'ipa::install::autofs'
+  if $easy_ipa::install_autofs {
+    contain 'easy_ipa::install::autofs'
   }
 
-  if $ipa::install_ldaputils {
-    package { $ipa::ldaputils_package_name:
+  if $easy_ipa::install_ldaputils {
+    package { $easy_ipa::ldaputils_package_name:
       ensure => present,
     }
   }
 
-  if $ipa::install_sssdtools {
-    package { $ipa::sssdtools_package_name:
+  if $easy_ipa::install_sssdtools {
+    package { $easy_ipa::sssdtools_package_name:
       ensure => present,
     }
   }
 
   # TODO: Validate role != client and configure_dns_server == true
-  if $ipa::final_configure_dns_server {
+  if $easy_ipa::final_configure_dns_server {
     $dns_packages = [
       'ipa-server-dns',
       'bind-dyndb-ldap',
@@ -47,12 +47,12 @@ class ipa::install {
     }
   }
 
-  if $ipa::install_ipa_server {
-    contain 'ipa::install::server'
+  if $easy_ipa::install_ipa_server {
+    contain 'easy_ipa::install::server'
   }
 
-  if $ipa::install_ipa_client or $ipa::ipa_role == 'client' {
-    contain 'ipa::install::client'
+  if $easy_ipa::install_ipa_client or $easy_ipa::ipa_role == 'client' {
+    contain 'easy_ipa::install::client'
   }
 
 }

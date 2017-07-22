@@ -1,6 +1,3 @@
 fixtures:
   repositories:
-    stdlib: git://github.com/puppetlabs/puppetlabs-stdlib.git
-    firewall: git://github.com/puppetlabs/puppetlabs-firewall.git
-  symlinks:
-    ipa: "#{source_dir}"
+    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib"

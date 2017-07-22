@@ -1,17 +1,17 @@
 # Configures port and redirect overrides for the IPA server web UI.
-class ipa::config::webui {
+class easy_ipa::config::webui {
 
-  if $ipa::webui_enable_proxy {
+  if $easy_ipa::webui_enable_proxy {
     #ref: https://www.redhat.com/archives/freeipa-users/2016-June/msg00128.html
-    $proxy_server_internal_fqdn = $ipa::ipa_server_fqdn
-    $proxy_server_external_fqdn = $ipa::webui_proxy_external_fqdn
-    $proxy_https_port = $ipa::webui_proxy_https_port
+    $proxy_server_internal_fqdn = $easy_ipa::ipa_server_fqdn
+    $proxy_server_external_fqdn = $easy_ipa::webui_proxy_external_fqdn
+    $proxy_https_port = $easy_ipa::webui_proxy_https_port
 
     $proxy_server_external_fqdn_and_port = "${proxy_server_external_fqdn}:${proxy_https_port}"
 
     $proxy_internal_uri = "https://${proxy_server_internal_fqdn}"
     $proxy_external_uri = "https://${proxy_server_external_fqdn}:${proxy_https_port}"
-    $proxy_server_name = "https://${ipa::ipa_server_fqdn}:${proxy_https_port}"
+    $proxy_server_name = "https://${easy_ipa::ipa_server_fqdn}:${proxy_https_port}"
     $proxy_referrer_regex = regsubst(
       $proxy_external_uri,
       '\.',
@@ -42,7 +42,7 @@ class ipa::config::webui {
     }
   }
 
-  if $ipa::webui_disable_kerberos {
+  if $easy_ipa::webui_disable_kerberos {
     file_line{'disable_kerberos_via_if_1':
       ensure => present,
       path   => '/etc/httpd/conf.d/ipa.conf',

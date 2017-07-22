@@ -141,53 +141,53 @@
 # TODO: variable scoping and passing
 # TODO: ditch the facter facts
 #
-class ipa (
-  $domain,
-  $ipa_role,
-  $admin_password                     = undef,
-  $directory_services_password        = undef,
-  $autofs_package_name                = 'autofs',
-  $configure_dns_server               = true,
-  $configure_ntp                      = true,
-  $custom_dns_forwarders              = [],
-  $domain_join_principal              = undef,
-  $domain_join_password               = undef,
-  $enable_hostname                    = true,
-  $enable_ip_address                  = false,
-  $fixed_primary                      = false,
-  $idstart                            = undef,
-  $install_autofs                     = false,
-  $install_epel                       = true,
-  $install_kstart                     = true,
-  $install_ldaputils                  = true,
-  $install_sssdtools                  = true,
-  $ipa_client_package_name            = $::osfamily ? {
+class easy_ipa (
+  String        $domain,
+  String        $ipa_role,
+  String        $admin_password                     = undef,
+  String        $directory_services_password        = undef,
+  String        $autofs_package_name                = 'autofs',
+  Boolean       $configure_dns_server               = true,
+  Boolean       $configure_ntp                      = true,
+  Array[String] $custom_dns_forwarders              = [],
+  String        $domain_join_principal              = undef,
+  String        $domain_join_password               = undef,
+  Boolean       $enable_hostname                    = true,
+  Boolean       $enable_ip_address                  = false,
+  Boolean       $fixed_primary                      = false,
+  Integer       $idstart                            = undef,
+  Boolean       $install_autofs                     = false,
+  Boolean       $install_epel                       = true,
+  Boolean       $install_kstart                     = true,
+  Boolean       $install_ldaputils                  = true,
+  Boolean       $install_sssdtools                  = true,
+  String        $ipa_client_package_name            = $::osfamily ? {
     'Debian' => 'freeipa-client',
     default  => 'ipa-client',
   },
-  $ipa_server_package_name            = 'ipa-server',
-  $install_ipa_client                 = false,
-  $install_ipa_server                 = false,
-  $install_sssd                       = true,
-  $ip_address                         = undef,
-  $ipa_server_fqdn                    = $::fqdn,
-  $kstart_package_name                = 'kstart',
-  $ldaputils_package_name             = $::osfamily ? {
+  String        $ipa_server_package_name            = 'ipa-server',
+  Boolean       $install_ipa_client                 = false,
+  Boolean       $install_ipa_server                 = false,
+  Boolean       $install_sssd                       = true,
+  String        $ip_address                         = undef,
+  String        $ipa_server_fqdn                    = $::fqdn,
+  String        $kstart_package_name                = 'kstart',
+  String        $ldaputils_package_name             = $::osfamily ? {
     'Debian' => 'ldap-utils',
     default  => 'openldap-clients',
   },
-  $ipa_master_fqdn                    = undef,
-  $manage_host_entry                  = false,
-  $mkhomedir                          = true,
-  $no_ui_redirect                     = false,
-  $realm                              = undef,
-  $sssd_package_name                  = 'sssd-common',
-  $sssdtools_package_name             = 'sssd-tools',
-  $webui_disable_kerberos             = false,
-  $webui_enable_proxy                 = false,
-  $webui_force_https                  = false,
-  $webui_proxy_external_fqdn          = 'localhost',
-  $webui_proxy_https_port             = '8440',
+  String        $ipa_master_fqdn                    = undef,
+  Boolean       $manage_host_entry                  = false,
+  Boolean       $mkhomedir                          = true,
+  Boolean       $no_ui_redirect                     = false,
+  String        $realm                              = undef,
+  String        $sssd_package_name                  = 'sssd-common',
+  String        $sssdtools_package_name             = 'sssd-tools',
+  Boolean       $webui_disable_kerberos             = false,
+  Boolean       $webui_enable_proxy                 = false,
+  Boolean       $webui_force_https                  = false,
+  String        $webui_proxy_external_fqdn          = 'localhost',
+  String        $webui_proxy_https_port             = '8440',
 ) {
 
   # TODO: move to params.pp
@@ -229,7 +229,7 @@ class ipa (
     $final_configure_dns_server = $configure_dns_server
   }
 
-  class {'::ipa::validate_params':}
-  -> class {'::ipa::install':}
+  class {'::easy_ipa::validate_params':}
+  -> class {'::easy_ipa::install':}
 
 }

@@ -1,6 +1,6 @@
 #
-class ipa::install::autofs {
-  package { $ipa::autofs_package_name:
+class easy_ipa::install::autofs {
+  package { $easy_ipa::autofs_package_name:
     ensure => present,
   }
 

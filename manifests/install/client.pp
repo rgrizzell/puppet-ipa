@@ -1,4 +1,4 @@
-# Class: ipa::client
+# Class: easy_ipa::client
 #
 # This class configures an IPA client
 #
@@ -10,29 +10,29 @@
 #
 # Sample Usage:
 #
-class ipa::install::client {
+class easy_ipa::install::client {
 
-  package{$ipa::ipa_client_package_name:
+  package{$easy_ipa::ipa_client_package_name:
     ensure => present,
   }
 
-  package{$ipa::kstart_package_name:
+  package{$easy_ipa::kstart_package_name:
     ensure => present,
   }
 
-  if $ipa::mkhomedir {
+  if $easy_ipa::mkhomedir {
     $client_install_cmd_opts_mkhomedir = '--mkhomedir'
   } else {
     $client_install_cmd_opts_mkhomedir = ''
   }
 
-  if $ipa::fixed_primary {
+  if $easy_ipa::fixed_primary {
     $client_install_cmd_opts_fixed_primary = '--fixed-primary'
   } else {
     $client_install_cmd_opts_fixed_primary = ''
   }
 
-  if $ipa::configure_ntp {
+  if $easy_ipa::configure_ntp {
     $client_install_cmd_opts_no_ntp = ''
   } else {
     $client_install_cmd_opts_no_ntp = '--no-ntp'
@@ -40,11 +40,11 @@ class ipa::install::client {
 
     $client_install_cmd = "\
 /usr/sbin/ipa-client-install \
-  --server=${ipa::ipa_master_fqdn} \
-  --realm=${ipa::final_realm} \
-  --domain=${ipa::domain} \
-  --principal='${ipa::final_domain_join_principal}' \
-  --password='${ipa::final_domain_join_password}' \
+  --server=${easy_ipa::ipa_master_fqdn} \
+  --realm=${easy_ipa::final_realm} \
+  --domain=${easy_ipa::domain} \
+  --principal='${easy_ipa::final_domain_join_principal}' \
+  --password='${easy_ipa::final_domain_join_password}' \
   ${client_install_cmd_opts_mkhomedir} \
   ${client_install_cmd_opts_fixed_primary} \
   ${client_install_cmd_opts_no_ntp} \
@@ -53,19 +53,19 @@ class ipa::install::client {
   exec { "client_install_${::fqdn}":
     command   => $client_install_cmd,
     timeout   => 0,
-    unless    => "cat /etc/ipa/default.conf | grep -i \"${ipa::domain}\"",
+    unless    => "cat /etc/ipa/default.conf | grep -i \"${easy_ipa::domain}\"",
     creates   => '/etc/ipa/default.conf',
     logoutput => 'on_failure',
-    # notify    => Ipa::Helpers::Flushcache["client_${::fqdn}"],
+    # notify    => easy_ipa::Helpers::Flushcache["client_${::fqdn}"],
     before    => Service['sssd'],
     provider  => 'shell',
   }
 
-  if $ipa::install_sssd {
+  if $easy_ipa::install_sssd {
     service { 'sssd':
       ensure  => 'running',
       enable  => true,
-      require => Package[$ipa::sssd_package_name],
+      require => Package[$easy_ipa::sssd_package_name],
     }
   }
 }

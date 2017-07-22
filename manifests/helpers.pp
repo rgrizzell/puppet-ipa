@@ -1,3 +1,3 @@
 # for loading
-class ipa::helpers {
+class easy_ipa::helpers {
 }

@@ -11,7 +11,7 @@ group :development do
   # Puppet control repository.  We're not using the rake rakes, but instead
   # directly invoking `rspec spec` in an effort to cut down on the amount of
   # implicit, magic behavior.  The controlrepo gem provides value in the form of
-  # an updated set of depenencies suitable for spec testing using rspec-puppet.
+  # an updated set of dependencies suitable for spec testing using rspec-puppet.
   #
   # https://github.com/jeffmccune/controlrepo_gem
   gem 'controlrepo'

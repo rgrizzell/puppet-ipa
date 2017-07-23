@@ -1,7 +1,5 @@
-# Class: easy_ipa::install::server::replica
 #
 class easy_ipa::install::server::replica {
-
   $replica_install_cmd = "\
 /usr/sbin/ipa-replica-install \
   --principal=${easy_ipa::final_domain_join_principal} \
@@ -17,8 +15,6 @@ class easy_ipa::install::server::replica {
   ${easy_ipa::install::server::server_install_cmd_opts_no_ui_redirect} \
   --unattended"
 
-  # ${easy_ipa::install::server::server_install_cmd_opts_external_ca} \
-
   # TODO: config-show and grep for IPA\ masters
   file { '/etc/ipa/primary':
     ensure  => 'file',
@@ -30,7 +26,7 @@ class easy_ipa::install::server::replica {
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
     logoutput => 'on_failure',
-    notify    => easy_ipa::Helpers::Flushcache["server_${easy_ipa::ipa_server_fqdn}"],
+    notify    => Easy_ipa::Helpers::Flushcache["server_${easy_ipa::ipa_server_fqdn}"],
     before    => Service['sssd'],
   }
   -> cron { 'k5start_root':

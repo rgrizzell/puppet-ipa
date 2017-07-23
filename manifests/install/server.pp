@@ -11,7 +11,7 @@ class easy_ipa::install::server {
     ensure => present,
   }
 
-  $server_install_cmd_opts_idstart = "--idstart=${easy_ipa::final_idstart}"
+  $server_install_cmd_opts_idstart = "--idstart=${easy_ipa::idstart}"
 
   if $easy_ipa::enable_hostname {
     $server_install_cmd_opts_hostname = "--hostname=${easy_ipa::ipa_server_fqdn}"
@@ -24,12 +24,6 @@ class easy_ipa::install::server {
   } else {
     $server_install_cmd_opts_ip_address = ''
   }
-
-  # if $easy_ipa::use_external_ca {
-  #   $server_install_cmd_opts_external_ca = '--external-ca'
-  # } else {
-  #   $server_install_cmd_opts_external_ca = ''
-  # }
 
   if $easy_ipa::final_configure_dns_server {
     $server_install_cmd_opts_setup_dns = '--setup-dns'

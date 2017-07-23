@@ -1,15 +1,8 @@
 class easy_ipa::config::admin_user {
 
   # TODO: configurable admin username.
-  $uid_number = ($::ipa_adminuidnumber =~ Integer) ? {
-    false   => $easy_ipa::final_idstart,
-    default => $facts['ipa_adminuidnumber']
-  }
-
-  $home_dir_path = $::ipa_adminhomedir ? {
-    ''   => '/home/admin',
-    default => $facts['ipa_adminhomedir']
-  }
+  $uid_number = $easy_ipa::idstart
+  $home_dir_path = '/home/admin'
 
   # Ensure admin homedir and keytab files.
   file { $home_dir_path:

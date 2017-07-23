@@ -30,14 +30,14 @@ class easy_ipa::config::webui {
     file { '/etc/httpd/conf.d/ipa-rewrite.conf':
       ensure  => present,
       replace => true,
-      content => template('ipa/ipa-rewrite.conf.erb'),
+      content => template('easy_ipa/ipa-rewrite.conf.erb'),
       notify  => Service['httpd'],
     }
 
     file { '/etc/httpd/conf.d/ipa-webui-proxy.conf':
       ensure  => present,
       replace => true,
-      content => template('ipa/ipa-webui-proxy.conf.erb'),
+      content => template('easy_ipa/ipa-webui-proxy.conf.erb'),
       notify  => Service['httpd'],
     }
   }

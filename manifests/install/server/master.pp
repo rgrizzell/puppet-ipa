@@ -1,16 +1,3 @@
-# Class: easy_ipa::install::server::master
-#
-# This class configures an IPA master
-#
-# Parameters:
-#
-# Actions:
-#
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
-#
-# Sample Usage:
-#
-
 #
 class easy_ipa::install::server::master {
   # Install
@@ -25,7 +12,6 @@ class easy_ipa::install::server::master {
   ${easy_ipa::install::server::server_install_cmd_opts_forwarders} \
   ${easy_ipa::install::server::server_install_cmd_opts_ip_address} \
   ${easy_ipa::install::server::server_install_cmd_opts_no_ntp} \
-  ${easy_ipa::install::server::server_install_cmd_opts_external_ca} \
   ${easy_ipa::install::server::server_install_cmd_opts_idstart} \
   ${easy_ipa::install::server::server_install_cmd_opts_no_ui_redirect} \
   --unattended"
@@ -40,7 +26,7 @@ class easy_ipa::install::server::master {
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
     logoutput => 'on_failure',
-    notify    => easy_ipa::Helpers::Flushcache["server_${easy_ipa::ipa_server_fqdn}"],
+    notify    => Easy_ipa::Helpers::Flushcache["server_${easy_ipa::ipa_server_fqdn}"],
     before    => Service['sssd'],
   }
   -> cron { 'k5start_root': #allows scp to replicas as root

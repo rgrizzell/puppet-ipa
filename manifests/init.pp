@@ -144,18 +144,18 @@
 class easy_ipa (
   String        $domain,
   String        $ipa_role,
-  String        $admin_password                     = undef,
-  String        $directory_services_password        = undef,
+  String        $admin_password                     = '',
+  String        $directory_services_password        = '',
   String        $autofs_package_name                = 'autofs',
   Boolean       $configure_dns_server               = true,
   Boolean       $configure_ntp                      = true,
   Array[String] $custom_dns_forwarders              = [],
-  String        $domain_join_principal              = undef,
-  String        $domain_join_password               = undef,
+  String        $domain_join_principal              = '',
+  String        $domain_join_password               = '',
   Boolean       $enable_hostname                    = true,
   Boolean       $enable_ip_address                  = false,
   Boolean       $fixed_primary                      = false,
-  Integer       $idstart                            = undef,
+  Integer       $idstart                            = (fqdn_rand('10737') + 10000),
   Boolean       $install_autofs                     = false,
   Boolean       $install_epel                       = true,
   Boolean       $install_kstart                     = true,
@@ -169,18 +169,18 @@ class easy_ipa (
   Boolean       $install_ipa_client                 = false,
   Boolean       $install_ipa_server                 = false,
   Boolean       $install_sssd                       = true,
-  String        $ip_address                         = undef,
+  String        $ip_address                         = '',
   String        $ipa_server_fqdn                    = $::fqdn,
   String        $kstart_package_name                = 'kstart',
   String        $ldaputils_package_name             = $::osfamily ? {
     'Debian' => 'ldap-utils',
     default  => 'openldap-clients',
   },
-  String        $ipa_master_fqdn                    = undef,
+  String        $ipa_master_fqdn                    = '',
   Boolean       $manage_host_entry                  = false,
   Boolean       $mkhomedir                          = true,
   Boolean       $no_ui_redirect                     = false,
-  String        $realm                              = undef,
+  String        $realm                              = '',
   String        $sssd_package_name                  = 'sssd-common',
   String        $sssdtools_package_name             = 'sssd-tools',
   Boolean       $webui_disable_kerberos             = false,
@@ -191,7 +191,7 @@ class easy_ipa (
 ) {
 
   # TODO: move to params.pp
-  if $realm {
+  if $realm != '' {
     $final_realm = $realm
   } else {
     $final_realm = upcase($domain)
@@ -205,19 +205,13 @@ class easy_ipa (
     "@${final_realm}"
   )
 
-  if $idstart {
-    $final_idstart = $idstart
-  } else {
-    $final_idstart = fqdn_rand('10737') + 10000
-  }
-
-  if $domain_join_principal {
+  if $domain_join_principal != '' {
     $final_domain_join_principal = $domain_join_principal
   } else {
     $final_domain_join_principal = 'admin'
   }
 
-  if $domain_join_password {
+  if $domain_join_password != '' {
     $final_domain_join_password = $domain_join_password
   } else {
     $final_domain_join_password = $directory_services_password

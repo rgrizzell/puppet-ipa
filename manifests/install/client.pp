@@ -51,7 +51,6 @@ class easy_ipa::install::client {
     unless    => "cat /etc/ipa/default.conf | grep -i \"${easy_ipa::domain}\"",
     creates   => '/etc/ipa/default.conf',
     logoutput => 'on_failure',
-    # notify    => easy_ipa::Helpers::Flushcache["client_${::fqdn}"],
     before    => Service['sssd'],
     provider  => 'shell',
   }

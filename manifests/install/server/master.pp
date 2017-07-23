@@ -1,6 +1,5 @@
 #
 class easy_ipa::install::server::master {
-  # Install
   $server_install_cmd = "\
 /usr/sbin/ipa-server-install \
   ${easy_ipa::install::server::server_install_cmd_opts_hostname} \

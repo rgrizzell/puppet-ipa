@@ -24,30 +24,23 @@ class easy_ipa::install {
     contain 'easy_ipa::install::autofs'
   }
 
-  # if $easy_ipa::ipa_role != 'client' or $easy_ipa::install_ldaputils {
-  #   package { $easy_ipa::ldaputils_package_name:
-  #     ensure => present,
-  #   }
-  # }
-
   if $easy_ipa::install_sssdtools {
     package { $easy_ipa::sssdtools_package_name:
       ensure => present,
     }
   }
 
-  # TODO: Validate role != client and configure_dns_server == true
-  if $easy_ipa::final_configure_dns_server {
-    $dns_packages = [
-      'ipa-server-dns',
-      'bind-dyndb-ldap',
-    ]
-    package{$dns_packages:
-      ensure => present,
-    }
-  }
-
   if $easy_ipa::ipa_role == 'master' or $easy_ipa::ipa_role == 'replica' {
+    if $easy_ipa::final_configure_dns_server {
+      $dns_packages = [
+        'ipa-server-dns',
+        'bind-dyndb-ldap',
+      ]
+      package{$dns_packages:
+        ensure => present,
+      }
+    }
+
     if $easy_ipa::install_ipa_server {
       contain 'easy_ipa::install::server'
     }

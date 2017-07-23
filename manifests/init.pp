@@ -141,6 +141,7 @@
 # TODO: Dependencies and metadata updates.
 # TODO: Variable scope and passing.
 # TODO: Params.pp.
+# TODO: configurable admin username.
 #
 class easy_ipa (
   String        $domain,

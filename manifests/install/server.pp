@@ -1,6 +1,4 @@
-# Definition: easy_ipa::serverinstall
 #
-# Installs an IPA server
 class easy_ipa::install::server {
 
   package{$easy_ipa::ipa_server_package_name:
@@ -94,7 +92,6 @@ class easy_ipa::install::server {
     }
   }
 
-  # TODO: might require relationship
   easy_ipa::helpers::flushcache { "server_${easy_ipa::ipa_server_fqdn}": }
   class {'easy_ipa::config::admin_user': }
 

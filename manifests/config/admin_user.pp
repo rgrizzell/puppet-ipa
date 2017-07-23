@@ -1,6 +1,6 @@
+#
 class easy_ipa::config::admin_user {
 
-  # TODO: configurable admin username.
   $uid_number = $easy_ipa::idstart
   $home_dir_path = '/home/admin'
 

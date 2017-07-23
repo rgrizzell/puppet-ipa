@@ -1,10 +1,6 @@
-before_install:
-- gem update --system 2.1.11
-- gem --version
-rvm: 2.1.9
-bundler_args: ''
+rvm: 2.2
 notifications:
   email:
-  - johnpuskar@gmail.com
+    - johnpuskar@gmail.com
 env:
-- PUPPET_VERSION=4.3.2
+  - PUPPET_VERSION=4.3.2

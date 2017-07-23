@@ -9,4 +9,4 @@ PuppetLint.configuration.ignore_paths = ["spec/**/*.pp", "pkg/**/*.pp"]
 PuppetLint.configuration.send('disable_class_inherits_from_params_class')
 
 desc "Run all tests"
-task :test => [:lint, :validate, :spec]
+task :default => [:lint, :validate, :spec]

@@ -54,7 +54,7 @@ class easy_ipa::config::webui {
     file_line{'disable_kerberos_via_if_2':
       ensure => present,
       path   => '/etc/httpd/conf.d/ipa.conf',
-      line   => "  </If>",
+      line   => '  </If>',
       notify => Service['httpd'],
       after  => 'ErrorDocument\ 401\ /ipa/errors/unauthorized.html',
     }

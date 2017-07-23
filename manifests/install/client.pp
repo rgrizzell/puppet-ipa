@@ -1,14 +1,3 @@
-# Class: easy_ipa::client
-#
-# This class configures an IPA client
-#
-# Parameters:
-#
-# Actions:
-#
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
-#
-# Sample Usage:
 #
 class easy_ipa::install::client {
 
@@ -18,6 +7,12 @@ class easy_ipa::install::client {
 
   package{$easy_ipa::kstart_package_name:
     ensure => present,
+  }
+
+  if $easy_ipa::client_install_ldaputils {
+    package { $easy_ipa::ldaputils_package_name:
+      ensure => present,
+    }
   }
 
   if $easy_ipa::mkhomedir {

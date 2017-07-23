@@ -18,6 +18,9 @@
 # `autofs_package_name`
 #      (string) Name of the autofs package to install if enabled.
 #
+# `client_install_ldaputils`
+#      (boolean) If true, then the ldaputils packages are installed if ipa_role is set to client.
+#
 # `configure_dns_server`
 #      (boolean) If true, then the parameter '--setup-dns' is passed to the IPA server installer.
 #                Also, triggers the install of the required dns server packages.
@@ -57,9 +60,6 @@
 #
 # `install_kstart`
 #      (boolean) If true, then the kstart packages are installed.
-#
-# `install_ldaputils`
-#      (boolean) If true, then the ldaputils packages are installed.
 #
 # `install_sssdtools`
 #      (boolean) If true, then the sssdtools packages are installed.
@@ -106,6 +106,9 @@
 # `realm`
 #      (string) The name of the IPA realm to create or join.
 #
+# `server_install_ldaputils`
+#      (boolean) If true, then the ldaputils packages are installed if ipa_role is not set to client.
+#
 # `sssd_package_name`
 #      (string) Name of the sssd package.
 #
@@ -136,10 +139,8 @@
 # TODO: Allow creation of root zone for isolated networks -- https://www.freeipa.org/page/Howto/DNS_in_isolated_networks
 # TODO: Class comments.
 # TODO: Dependencies and metadata updates.
-# TODO: Linting
-# TODO: Spec tests
-# TODO: variable scoping and passing
-# TODO: ditch the facter facts
+# TODO: Variable scope and passing.
+# TODO: Params.pp.
 #
 class easy_ipa (
   String        $domain,
@@ -147,6 +148,7 @@ class easy_ipa (
   String        $admin_password                     = '',
   String        $directory_services_password        = '',
   String        $autofs_package_name                = 'autofs',
+  Boolean       $client_install_ldaputils           = false,
   Boolean       $configure_dns_server               = true,
   Boolean       $configure_ntp                      = true,
   Array[String] $custom_dns_forwarders              = [],
@@ -159,15 +161,14 @@ class easy_ipa (
   Boolean       $install_autofs                     = false,
   Boolean       $install_epel                       = true,
   Boolean       $install_kstart                     = true,
-  Boolean       $install_ldaputils                  = true,
   Boolean       $install_sssdtools                  = true,
   String        $ipa_client_package_name            = $::osfamily ? {
     'Debian' => 'freeipa-client',
     default  => 'ipa-client',
   },
   String        $ipa_server_package_name            = 'ipa-server',
-  Boolean       $install_ipa_client                 = false,
-  Boolean       $install_ipa_server                 = false,
+  Boolean       $install_ipa_client                 = true,
+  Boolean       $install_ipa_server                 = true,
   Boolean       $install_sssd                       = true,
   String        $ip_address                         = '',
   String        $ipa_server_fqdn                    = $::fqdn,
@@ -181,6 +182,7 @@ class easy_ipa (
   Boolean       $mkhomedir                          = true,
   Boolean       $no_ui_redirect                     = false,
   String        $realm                              = '',
+  Boolean       $server_install_ldaputils           = true,
   String        $sssd_package_name                  = 'sssd-common',
   String        $sssdtools_package_name             = 'sssd-tools',
   Boolean       $webui_disable_kerberos             = false,
@@ -190,7 +192,10 @@ class easy_ipa (
   String        $webui_proxy_https_port             = '8440',
 ) {
 
-  # TODO: move to params.pp
+  if $facts['kernel'] != 'Linux' or $facts['osfamily'] == 'Windows' {
+    fail('This module is only supported on Linux.')
+  }
+
   if $realm != '' {
     $final_realm = $realm
   } else {

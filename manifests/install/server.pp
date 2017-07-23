@@ -11,6 +11,12 @@ class easy_ipa::install::server {
     ensure => present,
   }
 
+  if $easy_ipa::server_install_ldaputils {
+    package { $easy_ipa::ldaputils_package_name:
+      ensure => present,
+    }
+  }
+
   $server_install_cmd_opts_idstart = "--idstart=${easy_ipa::idstart}"
 
   if $easy_ipa::enable_hostname {

@@ -24,11 +24,11 @@ class easy_ipa::install {
     contain 'easy_ipa::install::autofs'
   }
 
-  if $easy_ipa::install_ldaputils {
-    package { $easy_ipa::ldaputils_package_name:
-      ensure => present,
-    }
-  }
+  # if $easy_ipa::ipa_role != 'client' or $easy_ipa::install_ldaputils {
+  #   package { $easy_ipa::ldaputils_package_name:
+  #     ensure => present,
+  #   }
+  # }
 
   if $easy_ipa::install_sssdtools {
     package { $easy_ipa::sssdtools_package_name:
@@ -47,12 +47,14 @@ class easy_ipa::install {
     }
   }
 
-  if $easy_ipa::install_ipa_server {
-    contain 'easy_ipa::install::server'
-  }
-
-  if $easy_ipa::install_ipa_client or $easy_ipa::ipa_role == 'client' {
-    contain 'easy_ipa::install::client'
+  if $easy_ipa::ipa_role == 'master' or $easy_ipa::ipa_role == 'replica' {
+    if $easy_ipa::install_ipa_server {
+      contain 'easy_ipa::install::server'
+    }
+  } elsif $easy_ipa::ipa_role == 'client' {
+    if $easy_ipa::install_ipa_client {
+      contain 'easy_ipa::install::client'
+    }
   }
 
 }

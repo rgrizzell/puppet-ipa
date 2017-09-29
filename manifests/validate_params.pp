@@ -9,10 +9,7 @@ class easy_ipa::validate_params {
   }
 
   if $easy_ipa::ip_address != '' {
-    # TODO: validate_legacy
-    if !is_ipv4_address($easy_ipa::ip_address) {
-      fail('The parameter ip_address must pass validation as an IPv4 address.')
-    }
+    validate_legacy('String', 'validate_ip_address', $easy_ipa::ip_address)
   }
 
   if $easy_ipa::manage_host_entry {
@@ -25,15 +22,8 @@ class easy_ipa::validate_params {
     fail('Parameter "idstart" must be an integer greater than 10000.')
   }
 
-  # TODO: validate_legacy
-  if ! is_domain_name($easy_ipa::domain) {
-    fail('The parameter \'domain\' must pass validation as a domain name.')
-  }
-
-  # TODO: validate_legacy
-  if ! is_domain_name($easy_ipa::final_realm) {
-    fail('The parameter \'realm\' must pass validation as a domain name.')
-  }
+  validate_legacy('String', 'validate_domain_name', $easy_ipa::domain)
+  validate_legacy('String', 'validate_domain_name', $easy_ipa::final_realm)
 
   if $easy_ipa::ipa_role == 'master' {
     if length($easy_ipa::admin_password) < 8 {
@@ -53,9 +43,9 @@ must be populated and at least of length 8."
     # TODO: validate_legacy
     if $easy_ipa::ipa_master_fqdn == ''{
       fail("When creating a ${easy_ipa::ipa_role} the parameter named ipa_master_fqdn cannot be empty.")
-    } elsif !is_domain_name($easy_ipa::ipa_master_fqdn) {
-      fail('The parameter \'ipa_master_fqdn\' must pass validation as a domain name.')
     }
+
+    validate_legacy('String', 'validate_domain_name', $easy_ipa::ipa_master_fqdn)
 
     if $easy_ipa::final_domain_join_password == '' {
       fail("When creating a ${easy_ipa::ipa_role} the parameter named domain_join_password cannot be empty.")

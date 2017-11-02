@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
             vb.gui = false
-            vb.memory = 4096
+            vb.memory = 1536
             vb.customize ["modifyvm", :id, "--ioapic", "on"]
             vb.customize ["modifyvm", :id, "--hpet", "on"]
         end
@@ -61,7 +61,7 @@ SCRIPT
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
             vb.gui = false
-            vb.memory = 4096
+            vb.memory = 1536
             vb.customize ["modifyvm", :id, "--ioapic", "on"]
             vb.customize ["modifyvm", :id, "--hpet", "on"]
         end
@@ -120,7 +120,7 @@ SCRIPT
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
             vb.gui = false
-            vb.memory = 4096
+            vb.memory = 1024
             vb.customize ["modifyvm", :id, "--ioapic", "on"]
             vb.customize ["modifyvm", :id, "--hpet", "on"]
         end

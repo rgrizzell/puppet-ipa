@@ -17,40 +17,8 @@ Vagrant.configure("2") do |config|
         box.vm.network "private_network", ip: "192.168.44.35"
         box.vm.network "forwarded_port", guest: 8000, host: 8000
         box.vm.network "forwarded_port", guest: 8440, host: 8440
-
-        $script = <<SCRIPT
-echo I am provisioning...
-export FACTER_is_vagrant='true'
-rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
-yum install -y puppet-agent
-export PATH=$PATH:/opt/puppetlabs/bin
-puppet module install puppetlabs-concat
-puppet module install puppetlabs-stdlib
-puppet module install crayfishx-firewalld
-puppet module install puppet-selinux
-if [ -d /tmp/modules/easy_ipa ]; then rm -rf /tmp/modules/easy_ipa; fi
-mkdir -p /tmp/modules/easy_ipa
-cp -r /vagrant/* /tmp/modules/easy_ipa
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class {'::easy_ipa':\
-    ipa_role => 'master',\
-    domain => 'vagrant.example.lan',\
-    ipa_server_fqdn => 'ipa-server-1.vagrant.example.lan',\
-    admin_password => 'vagrant123',\
-    directory_services_password => 'vagrant123',\
-    install_ipa_server => true,\
-    ip_address => '192.168.44.35',\
-    enable_ip_address => true,\
-    enable_hostname => true,\
-    manage_host_entry => true,\
-    install_epel => true,\
-    webui_disable_kerberos => true,\
-    webui_enable_proxy => true,\
-    webui_force_https => true,\
-}"
-SCRIPT
-
-        box.vm.provision "shell", inline: $script
+        box.vm.provision "shell", path: "vagrant/common.sh"
+        box.vm.provision "shell", path: "vagrant/ipa-server-1.sh"
     end
 
     config.vm.define "ipa-server-2" do |box|
@@ -66,50 +34,8 @@ SCRIPT
             vb.customize ["modifyvm", :id, "--hpet", "on"]
         end
         box.vm.network "private_network", ip: "192.168.44.36"
-
-        $script = <<SCRIPT
-echo I am provisioning...
-export FACTER_is_vagrant='true'
-rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
-yum install -y puppet-agent
-export PATH=$PATH:/opt/puppetlabs/bin
-puppet module install puppetlabs-concat
-puppet module install puppetlabs-stdlib
-puppet module install crayfishx-firewalld
-puppet module install puppet-selinux
-puppet module install saz-resolv_conf
-if [ -d /tmp/modules/easy_ipa ]; then rm -rf /tmp/modules/easy_ipa; fi
-mkdir -p /tmp/modules/easy_ipa
-cp -r /vagrant/* /tmp/modules/easy_ipa
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class { 'resolv_conf':\
-    nameservers => ['192.168.44.35'],\
-  }"
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  host {'ipa-server-1.vagrant.example.lan':\
-    ensure => present,\
-    ip => '192.168.44.35',\
-  }"
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class {'::easy_ipa':\
-    ipa_role => 'replica',\
-    domain => 'vagrant.example.lan',\
-    ipa_server_fqdn => 'ipa-server-2.vagrant.example.lan',\
-    domain_join_password => 'vagrant123',\
-    install_ipa_server => true,\
-    ip_address => '192.168.44.36',\
-    enable_ip_address => true,\
-    enable_hostname => true,\
-    manage_host_entry => true,\
-    install_epel => true,\
-    ipa_master_fqdn => 'ipa-server-1.vagrant.example.lan',\
-  }"
-
-SCRIPT
-
-#     admin_password => 'vagrant123',\
-
-        box.vm.provision "shell", inline: $script
+        box.vm.provision "shell", path: "vagrant/common.sh"
+        box.vm.provision "shell", path: "vagrant/ipa-server-2.sh"
     end
 
     config.vm.define "ipa-client-1" do |box|
@@ -125,36 +51,7 @@ SCRIPT
             vb.customize ["modifyvm", :id, "--hpet", "on"]
         end
         box.vm.network "private_network", ip: "192.168.44.37"
-
-        $script = <<SCRIPT
-echo I am provisioning...
-export FACTER_is_vagrant='true'
-rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
-yum install -y puppet-agent
-export PATH=$PATH:/opt/puppetlabs/bin
-puppet module install puppetlabs-concat
-puppet module install puppetlabs-stdlib
-puppet module install crayfishx-firewalld
-puppet module install puppet-selinux
-puppet module install saz-resolv_conf
-if [ -d /tmp/modules/easy_ipa ]; then rm -rf /tmp/modules/easy_ipa; fi
-mkdir -p /tmp/modules/easy_ipa
-cp -r /vagrant/* /tmp/modules/easy_ipa
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class { 'resolv_conf':\
-    nameservers => ['192.168.44.35'],\
-  }"
-puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/production/modules' -e "\
-  class {'::easy_ipa':\
-    ipa_role => 'client',\
-    domain => 'vagrant.example.lan',\
-    domain_join_password => 'vagrant123',\
-    install_epel => true,\
-    ipa_master_fqdn => 'ipa-server-1.vagrant.example.lan',\
-  }"
-SCRIPT
-
-        box.vm.provision "shell", inline: $script
+        box.vm.provision "shell", path: "vagrant/common.sh"
+        box.vm.provision "shell", path: "vagrant/ipa-client-1.sh"
     end
-
 end

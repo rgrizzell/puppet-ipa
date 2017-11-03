@@ -17,6 +17,12 @@ class easy_ipa::install::server {
 
   $server_install_cmd_opts_idstart = "--idstart=${easy_ipa::idstart}"
 
+  if $easy_ipa::allow_zone_overlap {
+    $server_install_cmd_opts_zone_overlap = '--allow-zone-overlap'
+  } else {
+    $server_install_cmd_opts_zone_overlap = ''
+  }
+
   if $easy_ipa::enable_hostname {
     $server_install_cmd_opts_hostname = "--hostname=${easy_ipa::ipa_server_fqdn}"
   } else {

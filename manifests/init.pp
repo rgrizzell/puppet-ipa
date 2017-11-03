@@ -15,6 +15,12 @@
 # `directory_services_password`
 #      (string) Password which will be passed into the ipa setup's parameter named "--ds-password".
 #
+# `allow_zone_overlap`
+#      (boolean) if set to true, allow creating of (reverse) zone even if the zone is already
+#                resolvable. Using this option is discouraged as it result in later problems with
+#                domain name. You may have to use this, though, when migrating existing DNS
+#                domains to FreeIPA.
+#
 # `autofs_package_name`
 #      (string) Name of the autofs package to install if enabled.
 #
@@ -149,6 +155,7 @@ class easy_ipa (
   String        $admin_password                     = '',
   String        $directory_services_password        = '',
   String        $autofs_package_name                = 'autofs',
+  Boolean       $allow_zone_overlap                 = false,
   Boolean       $client_install_ldaputils           = false,
   Boolean       $configure_dns_server               = true,
   Boolean       $configure_ntp                      = true,

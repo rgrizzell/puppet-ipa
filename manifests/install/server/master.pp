@@ -7,6 +7,7 @@ class easy_ipa::install::server::master {
   --domain=${easy_ipa::domain} \
   --admin-password='${easy_ipa::admin_password}' \
   --ds-password='${easy_ipa::directory_services_password}' \
+  ${easy_ipa::install::server::server_install_cmd_opts_zone_overlap} \
   ${easy_ipa::install::server::server_install_cmd_opts_setup_dns} \
   ${easy_ipa::install::server::server_install_cmd_opts_forwarders} \
   ${easy_ipa::install::server::server_install_cmd_opts_ip_address} \

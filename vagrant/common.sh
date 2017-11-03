@@ -2,7 +2,8 @@
 echo I am provisioning...
 export FACTER_is_vagrant='true'
 rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
-yum install -y puppet-agent
+yum install -y puppet-agent yum-utils
+yum-config-manager --save --setopt=puppetlabs-pc1.skip_if_unavailable=true
 export PATH=$PATH:/opt/puppetlabs/bin
 puppet module install puppetlabs-concat
 puppet module install puppetlabs-stdlib

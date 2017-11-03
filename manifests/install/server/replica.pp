@@ -8,6 +8,7 @@ class easy_ipa::install::server::replica {
   --realm=${easy_ipa::final_realm} \
   --domain=${easy_ipa::domain} \
   --server=${easy_ipa::ipa_master_fqdn} \
+  ${easy_ipa::install::server::server_install_cmd_opts_zone_overlap} \
   ${easy_ipa::install::server::server_install_cmd_opts_setup_dns} \
   ${easy_ipa::install::server::server_install_cmd_opts_forwarders} \
   ${easy_ipa::install::server::server_install_cmd_opts_ip_address} \

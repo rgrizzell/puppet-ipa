@@ -21,4 +21,5 @@ puppet apply --modulepath '/tmp/modules:/etc/puppetlabs/code/environments/produc
     manage_host_entry => true,\
     install_epel => true,\
     ipa_master_fqdn => 'ipa-server-1.vagrant.example.lan',\
+    idstart => 14341,\
   }"

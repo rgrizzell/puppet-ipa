@@ -19,6 +19,12 @@ class easy_ipa::config::webui {
       'G',
     )
 
+    exec { 'semanage-port-http_port_t':
+        command => "semanage port -a -t http_port_t -p tcp ${proxy_https_port}",
+        unless  => "semanage port -l|grep -E \"^http_port_t.*tcp.*${proxy_https_port}\"",
+        path    => ['/bin','/sbin','/usr/bin','/usr/sbin'],
+    }
+
     file_line { 'webui_additional_https_port_listener':
       ensure => present,
       path   => '/etc/httpd/conf.d/nss.conf',
@@ -39,6 +45,7 @@ class easy_ipa::config::webui {
       replace => true,
       content => template('easy_ipa/ipa-webui-proxy.conf.erb'),
       notify  => Service['httpd'],
+      require => Exec['semanage-port-http_port_t'],
     }
   }
 

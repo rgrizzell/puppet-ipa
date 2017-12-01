@@ -23,6 +23,12 @@ class easy_ipa::install::server {
     $server_install_cmd_opts_zone_overlap = ''
   }
 
+  if $easy_ipa::no_dnssec_validation {
+    $server_install_cmd_opts_dnssec_validation = '--no-dnssec-validation'
+  } else {
+    $server_install_cmd_opts_dnssec_validation = ''
+  }
+
   if $easy_ipa::enable_hostname {
     $server_install_cmd_opts_hostname = "--hostname=${easy_ipa::ipa_server_fqdn}"
   } else {

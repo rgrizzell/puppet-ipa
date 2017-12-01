@@ -21,6 +21,9 @@
 #                domain name. You may have to use this, though, when migrating existing DNS
 #                domains to FreeIPA.
 #
+# `no_dnssec_validation`
+#      (boolean) if set to true, DNSSEC validation is disabled.
+#
 # `autofs_package_name`
 #      (string) Name of the autofs package to install if enabled.
 #
@@ -156,6 +159,7 @@ class easy_ipa (
   String        $directory_services_password        = '',
   String        $autofs_package_name                = 'autofs',
   Boolean       $allow_zone_overlap                 = false,
+  Boolean       $no_dnssec_validation               = false,
   Boolean       $client_install_ldaputils           = false,
   Boolean       $configure_dns_server               = true,
   Boolean       $configure_ntp                      = true,

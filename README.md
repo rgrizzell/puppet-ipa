@@ -63,6 +63,15 @@ class {'::easy_ipa':
 }
 ```
 
+Add iptables/ip6tables allow rules:
+
+```
+class { '::easy_ipa::packetfilter::server':
+    allow_address_ipv4 => '10.0.0.0/8',
+    allow_address_ipv6 => '::1',
+}
+```
+
 Adding a client:
 ```puppet
 class {'::easy_ipa':

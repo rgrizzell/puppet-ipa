@@ -63,6 +63,15 @@ class {'::easy_ipa':
 }
 ```
 
+Add monitoring with [monit](https://mmonit.com/monit/). Depends on the 
+[puppetfinland-monit](https://github.com/Puppet-Finland/monit) module:
+
+```
+class { '::easy_ipa::monit::server':
+    email => 'monitoring@domain.com',
+}
+```
+
 Add iptables/ip6tables allow rules:
 
 ```

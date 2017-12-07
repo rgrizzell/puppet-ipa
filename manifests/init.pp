@@ -35,7 +35,8 @@
 #                Also, triggers the install of the required dns server packages.
 #
 # `configure_ntp`
-#      (boolean) If false, then the parameter '--no-ntp' is passed to the IPA server installer.
+#      (boolean) If false, then the parameter '--no-ntp' is passed to the IPA client and server
+#                installers.
 #
 # `custom_dns_forwarders`
 #      (array[string]) Each element in this array is prefixed with '--forwarder '

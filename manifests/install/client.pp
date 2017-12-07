@@ -33,6 +33,12 @@ class easy_ipa::install::client {
     $client_install_cmd_opts_no_ntp = '--no-ntp'
   }
 
+  if $easy_ipa::configure_sshd {
+    $client_install_cmd_opts_no_sshd = ''
+  } else {
+    $client_install_cmd_opts_no_sshd = '--no-sshd'
+  }
+
     $client_install_cmd = "\
 /usr/sbin/ipa-client-install \
   --server=${easy_ipa::ipa_master_fqdn} \
@@ -43,6 +49,7 @@ class easy_ipa::install::client {
   ${client_install_cmd_opts_mkhomedir} \
   ${client_install_cmd_opts_fixed_primary} \
   ${client_install_cmd_opts_no_ntp} \
+  ${client_install_cmd_opts_no_sshd} \
   --unattended"
 
   exec { "client_install_${::fqdn}":

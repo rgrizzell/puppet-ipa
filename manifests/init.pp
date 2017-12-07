@@ -38,6 +38,10 @@
 #      (boolean) If false, then the parameter '--no-ntp' is passed to the IPA client and server
 #                installers.
 #
+# `configure_sshd`
+#      (boolean) If false, then the parameter '--no-sshd' is passed to the IPA client and server
+#                installers.
+#
 # `custom_dns_forwarders`
 #      (array[string]) Each element in this array is prefixed with '--forwarder '
 #                      and passed to the IPA server installer.
@@ -164,6 +168,7 @@ class easy_ipa (
   Boolean       $client_install_ldaputils           = false,
   Boolean       $configure_dns_server               = true,
   Boolean       $configure_ntp                      = true,
+  Boolean       $configure_sshd                     = true,
   Array[String] $custom_dns_forwarders              = [],
   String        $domain_join_principal              = '',
   String        $domain_join_password               = '',

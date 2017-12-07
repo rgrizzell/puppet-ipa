@@ -1,3 +1,4 @@
+#
 define easy_ipa::helpers::flushcache {
 
   #TODO: nscd should be called on both platforms.

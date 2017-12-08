@@ -112,7 +112,8 @@
 #      (boolean) If true, then a host entry is created using the parameters 'ipa_server_fqdn' and 'ip_address'.
 #
 # `mkhomedir`
-#      (boolean) If true, then the parameter '--mkhomedir' is passed to the IPA client installer.
+#      (boolean) If true, then the parameter '--mkhomedir' is passed to the IPA server and client
+#      installers.
 #
 # `no_ui_redirect`
 #      (boolean) If true, then the parameter '--no-ui-redirect' is passed to the IPA server installer.

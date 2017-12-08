@@ -76,6 +76,12 @@ class easy_ipa::install::server {
     $server_install_cmd_opts_no_ui_redirect = '--no-ui-redirect'
   }
 
+  if $easy_ipa::mkhomedir {
+    $server_install_cmd_opts_mkhomedir = '--mkhomedir'
+  } else {
+    $server_install_cmd_opts_mkhomedir = ''
+  }
+
   if $easy_ipa::ipa_role == 'master' {
     contain 'easy_ipa::install::server::master'
   } elsif $easy_ipa::ipa_role == 'replica' {

@@ -62,6 +62,10 @@ class easy_ipa::install::client {
     provider  => 'shell',
   }
 
+  if $facts['os']['family'] == 'Debian' and $::easy_ipa::mkhomedir {
+    include ::easy_ipa::install::client::debian
+  }
+
   if $easy_ipa::install_sssd {
     service { 'sssd':
       ensure  => 'running',

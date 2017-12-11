@@ -1,7 +1,7 @@
 #
 class easy_ipa::install {
 
-  if $easy_ipa::install_epel {
+  if $easy_ipa::install_epel and $facts['os']['family'] == 'RedHat' {
     ensure_resource(
       'package',
       'epel-release',

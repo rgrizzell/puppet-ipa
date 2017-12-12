@@ -2,7 +2,7 @@
 DISTRO=$1
 echo I am provisioning...
 export FACTER_is_vagrant='true'
-wget https://apt.puppetlabs.com/puppetlabs-release-pc1-$DISTRO.deb
+wget https://apt.puppetlabs.com/puppetlabs-release-pc1-$DISTRO.deb -O puppetlabs-release-pc1-$DISTRO.deb
 dpkg -i puppetlabs-release-pc1-$DISTRO.deb
 apt-get update
 apt-get -y install puppet-agent

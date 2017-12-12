@@ -24,8 +24,6 @@ Vagrant.configure("2") do |config|
     config.vm.define "ipa-server-2" do |box|
         box.vm.box = "bento/centos-7.3"
         box.vm.hostname = 'ipa-server-2.vagrant.example.lan'
-        # Assign this VM to a host-only network IP, allowing you to access it
-        # via the IP.
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
             vb.gui = false
@@ -41,8 +39,6 @@ Vagrant.configure("2") do |config|
     config.vm.define "ipa-client-1" do |box|
         box.vm.box = "bento/centos-7.3"
         box.vm.hostname = 'ipa-client-1.vagrant.example.lan'
-        # Assign this VM to a host-only network IP, allowing you to access it
-        # via the IP.
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
             vb.gui = false
@@ -59,8 +55,6 @@ Vagrant.configure("2") do |config|
         box.vm.box = "ubuntu/xenial64"
         box.vm.box_version = "20171118.0.0"
         box.vm.hostname = 'ipa-client-2.vagrant.example.lan'
-        # Assign this VM to a host-only network IP, allowing you to access it
-        # via the IP.
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
             vb.gui = false

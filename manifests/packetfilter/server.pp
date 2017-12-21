@@ -17,6 +17,7 @@ class easy_ipa::packetfilter::server
                 'kerberos'        => { 'tcp' => 88,  'udp' => 88  },
                 'kerberos passwd' => { 'tcp' => 464, 'udp' => 464 },
                 'ldaps'           => { 'tcp' => 636               },
+                'ldap'            => { 'tcp' => 389               },
                 'ntp'             => { 'udp' => 123               },
   }
 

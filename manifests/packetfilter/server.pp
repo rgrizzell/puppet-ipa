@@ -29,18 +29,20 @@ class easy_ipa::packetfilter::server
     $service[1].each |$rule| {
       $service_name = $service[0]
       $protocol = $rule[0]
-      $port = $rule[1]
+      $dport = $rule[1]
 
-      @firewall { "008 ipv4 accept ${service_name} ${protocol}":
+      @firewall { "008 ipv4 accept ${service_name} ${protocol} ${port}":
         provider => 'iptables',
-        proto    => $proto,
+        proto    => $protocol,
         source   => $allow_address_ipv4,
+        dport    => $dport,
         tag      => 'default',
       }
       @firewall { "008 ipv6 accept ${service_name} ${protocol}":
         provider => 'ip6tables',
-        proto    => $proto,
+        proto    => $protocol,
         source   => $allow_address_ipv6,
+        dport    => $dport,
         tag      => 'default',
       }
     }

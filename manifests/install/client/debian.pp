@@ -9,9 +9,24 @@
 #
 class easy_ipa::install::client::debian {
 
-  $mkhomedir_line = $facts['os']['distro']['codename'] ? {
-    /^(xenial|stretch)$/ => 'session optional /lib/x86_64-linux-gnu/security/pam_oddjob_mkhomedir.so',
-    /^(trusty|jessie)$/  => 'session required pam_mkhomedir.so skel=/etc/skel/ umask=0022',
+  case $facts['os']['distro']['codename'] {
+    /^(xenial|stretch)$/: {
+      # This should preferably be in a separate Puppet module
+      service { 'oddjobd':
+        ensure => 'running',
+        enable => true,
+        name   => 'oddjobd',
+      }
+      $mkhomedir_line = 'session optional /lib/x86_64-linux-gnu/security/pam_oddjob_mkhomedir.so'
+      $notify = Service['oddjobd']
+    }
+    /^(trusty|jessie)$/: {
+      $mkhomedir_line = 'session required pam_mkhomedir.so skel=/etc/skel/ umask=0022'
+      $notify = undef
+    }
+    default: {
+      fail('ERROR: unsupported Debian/Ubuntu version!')
+    }
   }
 
   file_line { 'mkhomedir':
@@ -19,5 +34,6 @@ class easy_ipa::install::client::debian {
     path   => '/etc/pam.d/common-session',
     line   => $mkhomedir_line,
     after  => '^# end of pam-auth-update config',
+    notify => $notify,
   }
 }

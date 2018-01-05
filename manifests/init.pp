@@ -211,9 +211,8 @@ class easy_ipa (
   String        $webui_proxy_https_port             = '8440',
 ) {
 
-  if $facts['kernel'] != 'Linux' or $facts['osfamily'] == 'Windows' {
-    fail('This module is only supported on Linux.')
-  }
+  # Include per-OS parameters and fail on unsupported OS
+  include ::easy_ipa::params
 
   if $realm != '' {
     $final_realm = $realm

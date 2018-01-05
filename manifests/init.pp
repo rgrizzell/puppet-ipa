@@ -4,6 +4,13 @@
 #
 # Parameters
 # ----------
+# `manage`
+#      (boolean) Manage easy_ipa with Puppet. Defaults to true. Setting this to 
+#                to false is useful when a handful of hosts have unsupported 
+#                operating systems and you'd rather exclude them from FreeIPA 
+#                instead of including the others individually. Use this with
+#                a separate Hiera level (e.g. $::lsbdistcodename) for maximum
+#                convenience.
 # `domain`
 #      (string) The name of the IPA domain to create or join.
 # `ipa_role`
@@ -161,6 +168,7 @@
 class easy_ipa (
   String        $domain,
   String        $ipa_role,
+  Boolean       $manage                             = true,
   String        $admin_password                     = '',
   String        $directory_services_password        = '',
   String        $autofs_package_name                = 'autofs',
@@ -211,6 +219,8 @@ class easy_ipa (
   String        $webui_proxy_https_port             = '8440',
 ) {
 
+if $manage {
+
   # Include per-OS parameters and fail on unsupported OS
   include ::easy_ipa::params
 
@@ -249,4 +259,5 @@ class easy_ipa (
   class {'::easy_ipa::validate_params':}
   -> class {'::easy_ipa::install':}
 
+}
 }

@@ -25,7 +25,7 @@ class easy_ipa::install {
   }
 
   if $easy_ipa::install_sssdtools {
-    package { $easy_ipa::sssdtools_package_name:
+    package { $::easy_ipa::params::sssdtools_package_name:
       ensure => present,
     }
   }

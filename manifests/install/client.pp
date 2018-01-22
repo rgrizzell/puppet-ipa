@@ -1,16 +1,17 @@
 #
 class easy_ipa::install::client {
 
-  package{$easy_ipa::ipa_client_package_name:
+  package{ 'ipa-client':
     ensure => present,
+    name   => $::easy_ipa::params::ipa_client_package_name,
   }
 
-  package{$easy_ipa::kstart_package_name:
+  package{ $::easy_ipa::params::kstart_package_name:
     ensure => present,
   }
 
   if $easy_ipa::client_install_ldaputils {
-    package { $easy_ipa::ldaputils_package_name:
+    package { $::easy_ipa::params::ldaputils_package_name:
       ensure => present,
     }
   }
@@ -70,7 +71,7 @@ class easy_ipa::install::client {
     service { 'sssd':
       ensure  => 'running',
       enable  => true,
-      require => Package[$easy_ipa::sssd_package_name],
+      require => Package[$::easy_ipa::params::sssd_package_name],
     }
   }
 }

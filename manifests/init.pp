@@ -31,9 +31,6 @@
 # `no_dnssec_validation`
 #      (boolean) if set to true, DNSSEC validation is disabled.
 #
-# `autofs_package_name`
-#      (string) Name of the autofs package to install if enabled.
-#
 # `client_install_ldaputils`
 #      (boolean) If true, then the ldaputils packages are installed if ipa_role is set to client.
 #
@@ -85,12 +82,6 @@
 # `install_sssdtools`
 #      (boolean) If true, then the sssdtools packages are installed.
 #
-# `ipa_client_package_name`
-#      (string) Name of the IPA client package.
-#
-# `ipa_server_package_name`
-#      (string) Name of the IPA server package.
-#
 # `install_ipa_client`
 #      (boolean) If true, then the IPA client packages are installed if the parameter 'ipa_role' is set to 'client'.
 #
@@ -105,12 +96,6 @@
 #
 # `ipa_server_fqdn`
 #      (string) Actual fqdn of the IPA server or client.
-#
-# `kstart_package_name`
-#      (string) Name of the kstart package.
-#
-# `ldaputils_package_name`
-#      (string) Name of the ldaputils package.
 #
 # `ipa_master_fqdn`
 #      (string) FQDN of the server to use for a client or replica domain join.
@@ -130,12 +115,6 @@
 #
 # `server_install_ldaputils`
 #      (boolean) If true, then the ldaputils packages are installed if ipa_role is not set to client.
-#
-# `sssd_package_name`
-#      (string) Name of the sssd package.
-#
-# `sssdtools_package_name`
-#      (string) Name of the sssdtools package.
 #
 # `webui_disable_kerberos`
 #      (boolean) If true, then /etc/httpd/conf.d/ipa.conf is written to exclude kerberos support for
@@ -162,7 +141,6 @@
 # TODO: Class comments.
 # TODO: Dependencies and metadata updates.
 # TODO: Variable scope and passing.
-# TODO: Params.pp.
 # TODO: configurable admin username.
 #
 class easy_ipa (
@@ -171,7 +149,6 @@ class easy_ipa (
   Boolean       $manage                             = true,
   String        $admin_password                     = '',
   String        $directory_services_password        = '',
-  String        $autofs_package_name                = 'autofs',
   Boolean       $allow_zone_overlap                 = false,
   Boolean       $no_dnssec_validation               = false,
   Boolean       $client_install_ldaputils           = false,
@@ -189,35 +166,23 @@ class easy_ipa (
   Boolean       $install_epel                       = true,
   Boolean       $install_kstart                     = true,
   Boolean       $install_sssdtools                  = true,
-  String        $ipa_client_package_name            = $::osfamily ? {
-    'Debian' => 'freeipa-client',
-    default  => 'ipa-client',
-  },
-  String        $ipa_server_package_name            = 'ipa-server',
   Boolean       $install_ipa_client                 = true,
   Boolean       $install_ipa_server                 = true,
   Boolean       $install_sssd                       = true,
   String        $ip_address                         = '',
   String        $ipa_server_fqdn                    = $::fqdn,
-  String        $kstart_package_name                = 'kstart',
-  String        $ldaputils_package_name             = $::osfamily ? {
-    'Debian' => 'ldap-utils',
-    default  => 'openldap-clients',
-  },
   String        $ipa_master_fqdn                    = '',
   Boolean       $manage_host_entry                  = false,
   Boolean       $mkhomedir                          = true,
   Boolean       $no_ui_redirect                     = false,
   String        $realm                              = '',
   Boolean       $server_install_ldaputils           = true,
-  String        $sssd_package_name                  = 'sssd-common',
-  String        $sssdtools_package_name             = 'sssd-tools',
   Boolean       $webui_disable_kerberos             = false,
   Boolean       $webui_enable_proxy                 = false,
   Boolean       $webui_force_https                  = false,
   String        $webui_proxy_external_fqdn          = 'localhost',
   String        $webui_proxy_https_port             = '8440',
-) {
+) inherits easy_ipa::params {
 
 if $manage {
 

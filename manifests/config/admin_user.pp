@@ -75,7 +75,7 @@ class easy_ipa::config::admin_user {
     minute  => '*/1',
     notify  => Exec['chown_admin_keytab'],
     require => [
-      Package[$easy_ipa::kstart_package_name],
+      Package[$::easy_ipa::params::kstart_package_name],
       K5login["${home_dir_path}/.k5login"],
       File[$home_dir_path]
     ],

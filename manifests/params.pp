@@ -14,15 +14,28 @@ class easy_ipa::params {
         /(7)/:   { }
         default: { fail('ERROR: unsupported operating system') }
       }
+      $ldaputils_package_name = 'openldap-clients'
+      $ipa_client_package_name = 'ipa-client'
     }
     'Debian': {
       case $facts['os']['distro']['codename'] {
-        /(trusty|xenial|stretch)/: { }
-        default:                   { fail('ERROR: unsupported operating system') }
+        /(trusty|xenial)/: { $ipa_client_package_name = 'freeipa-client' }
+        /(stretch)/:       { $ipa_client_package_name = undef }
+        default:           { fail('ERROR: unsupported operating system') }
       }
+      $ldaputils_package_name = 'ldap-utils'
+
     }
     default: {
       fail('ERROR: unsupported operating system!')
     }
   }
+
+  # These package names are the same on RedHat and Debian derivatives
+  $autofs_package_name = 'autofs'
+  $ipa_server_package_name = 'ipa-server'
+  $kstart_package_name = 'kstart'
+  $sssd_package_name = 'sssd-common'
+  $sssdtools_package_name = 'sssd-tools'
+
 }

@@ -116,7 +116,8 @@ which lack ipa client package and thus the ipa-client-install script. Right now
 Debian 9 is the only operating system supported in this way. Client-side is 
 configured with the exception that sshd_config is not touched to prevent 
 configuration overlap with other Puppet modules. Adapt the following procedure 
-to completle enrollment of a host into IPA.
+(adapted from [here](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/identity_management_guide/linux-manual)) 
+to complete the enrollment of a host into IPA.
 
 On the IPA master:
 

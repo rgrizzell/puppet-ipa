@@ -16,15 +16,16 @@ class easy_ipa::params {
       }
       $ldaputils_package_name = 'openldap-clients'
       $ipa_client_package_name = 'ipa-client'
+      $ipa_client_package_ensure = 'present'
     }
     'Debian': {
       case $facts['os']['distro']['codename'] {
-        /(trusty|xenial)/: { $ipa_client_package_name = 'freeipa-client' }
-        /(stretch)/:       { $ipa_client_package_name = undef }
+        /(trusty|xenial)/: { $ipa_client_package_ensure = 'present' }
+        /(stretch)/:       { $ipa_client_package_ensure = 'absent' }
         default:           { fail('ERROR: unsupported operating system') }
       }
       $ldaputils_package_name = 'ldap-utils'
-
+      $ipa_client_package_name = 'freeipa-client'
     }
     default: {
       fail('ERROR: unsupported operating system!')

@@ -11,6 +11,11 @@ class easy_ipa::install::client::debian {
 
   case $facts['os']['distro']['codename'] {
     /^(xenial|stretch)$/: {
+
+      # Ensure that required packages are present even if they do not get pulled 
+      # in as freeipa-client package dependencies
+      ensure_packages(['oddjob','oddjob-mkhomedir'], {'ensure' => 'present'})
+
       # This should preferably be in a separate Puppet module
       service { 'oddjobd':
         ensure => 'running',

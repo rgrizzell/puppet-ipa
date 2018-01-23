@@ -2,7 +2,7 @@
 class easy_ipa::install::client {
 
   package{ 'ipa-client':
-    ensure => present,
+    ensure => $::easy_ipa::params::ipa_client_package_ensure,
     name   => $::easy_ipa::params::ipa_client_package_name,
   }
 
@@ -53,14 +53,21 @@ class easy_ipa::install::client {
   ${client_install_cmd_opts_no_sshd} \
   --unattended"
 
-  exec { "client_install_${::fqdn}":
-    command   => $client_install_cmd,
-    timeout   => 0,
-    unless    => "cat /etc/ipa/default.conf | grep -i \"${easy_ipa::domain}\"",
-    creates   => '/etc/ipa/default.conf',
-    logoutput => 'on_failure',
-    before    => Service['sssd'],
-    provider  => 'shell',
+  # Some platforms require "manual" setup as they don't have the freeipa-client
+  # package.
+  #
+  if $::easy_ipa::params::ipa_client_package_ensure == 'present' {
+    exec { "client_install_${::fqdn}":
+      command   => $client_install_cmd,
+      timeout   => 0,
+      unless    => "cat /etc/ipa/default.conf | grep -i \"${easy_ipa::domain}\"",
+      creates   => '/etc/ipa/default.conf',
+      logoutput => 'on_failure',
+      before    => Service['sssd'],
+      provider  => 'shell',
+    }
+  } else {
+    include ::easy_ipa::install::client::manual
   }
 
   if $facts['os']['family'] == 'Debian' and $::easy_ipa::mkhomedir {

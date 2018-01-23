@@ -109,6 +109,39 @@ ipa_master_fqdn      => 'ipa-server-1.vagrant.example.lan',
 }
 ```
 
+### Support for systems without ipa client packages
+
+This module has partial support configuring ipa clients on operating systems 
+which lack ipa client package and thus the ipa-client-install script. Right now 
+Debian 9 is the only operating system supported in this way. Client-side is 
+configured with the exception that sshd_config is not touched to prevent 
+configuration overlap with other Puppet modules. Adapt the following procedure 
+to completle enrollment of a host into IPA.
+
+On the IPA master:
+
+    kinit admin
+    ipa host-add --ip-address=192.168.44.40 ipa-client-4.vagrant.example.lan
+    ipa host-add-managedby --hosts=ipa-server-1.vagrant.example.lan ipa-client-4.vagrant.example.lan
+    ipa-getkeytab --server=ipa-server-1.vagrant.example.lan -p host/ipa-client-4.vagrant.example.lan -k /tmp/ipa-client-4.keytab
+    chmod 644 /tmp/ipa-client-4.keytab
+
+Copy the keytab to /etc/krb5.keytab on the client host to be enrolled and in there run
+
+    chown root:root /etc/krb5.keytab
+    chmod 600 /etc/krb5.keytab
+
+Assuming you had ran Puppet on the client and launching of sssd had failed, try again now:
+
+    systemctl restart sssd
+
+You should now be able to use kinit normally on the enrolled client:
+
+    kinit admin
+
+Many of these steps could be automated with exported resources, but getting the 
+Kerberos keytab back to the enrolled would somewhat be challenging. 
+
 ### Mandatory Parameters
 
 #### `domain`

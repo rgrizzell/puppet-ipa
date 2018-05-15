@@ -32,7 +32,7 @@ class easy_ipa::packetfilter::server
       $protocol = $rule[0]
       $dport = $rule[1]
 
-      @firewall { "008 ipv4 accept ${service_name} ${protocol} ${port}":
+      @firewall { "008 ipv4 accept ${service_name} ${protocol} ${dport}":
         provider => 'iptables',
         proto    => $protocol,
         source   => $allow_address_ipv4,

@@ -1,12 +1,12 @@
 {
-  "name": "jpuskar-easy_ipa",
+  "name": "puppetfinland-easy_ipa",
   "version": "2.1.0",
-  "author": "jpuskar",
+  "author": "Puppet-Finland team",
   "summary": "Manages IPA servers and clients.",
   "license": "Apache-2.0",
-  "source": "https://github.com/jpuskar/puppet-ipa",
-  "project_page": "https://github.com/jpuskar/puppet-ipa",
-  "issues_url": "https://github.com/jpuskar/puppet-ipa",
+  "source": "https://github.com/Puppet-Finland/puppet-ipa",
+  "project_page": "https://github.com/Puppet-Finland/puppet-ipa",
+  "issues_url": "https://github.com/Puppet-Finland/puppet-ipa",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
@@ -16,7 +16,31 @@
   "operatingsystem_support": [
     {
       "operatingsystem": "CentOS",
-      "operatingsystemrelease": [ "7" ]
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "14.04",
+        "16.04"
+      ]
     }
-  ]
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.7.0 < 6.0.0"
+    }
+  ],
+  "pdk-version": "1.4.1",
+  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
+  "template-ref": "1.4.1-0-g52adbbb"
 }

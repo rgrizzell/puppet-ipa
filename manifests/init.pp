@@ -182,7 +182,8 @@ class easy_ipa (
   Boolean       $webui_force_https                  = false,
   String        $webui_proxy_external_fqdn          = 'localhost',
   String        $webui_proxy_https_port             = '8440',
-) inherits easy_ipa::params {
+)
+{
 
 if $manage {
 

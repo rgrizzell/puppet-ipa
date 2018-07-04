@@ -19,6 +19,7 @@ class easy_ipa::packetfilter::server
                 'ldaps'           => { 'tcp' => 636               },
                 'ldap'            => { 'tcp' => 389               },
                 'ntp'             => { 'udp' => 123               },
+                'webcache'        => { 'tcp' => 8080              },
   }
 
   Firewall {

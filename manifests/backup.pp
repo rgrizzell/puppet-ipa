@@ -24,13 +24,13 @@
 #
 define easy_ipa::backup
 (
-    Enum['full','data'] $type,
-                        $hour,
-                        $minute,
-                        $weekday = undef,
-                        $monthday = undef,
-                        $email = $::servermonitor,
-    Boolean             $timestamp = true,
+    Enum['full','data']                                                 $type,
+    Variant[Array[String], Array[Integer[0-23]], String, Integer[0-23]] $hour,
+    Variant[Array[String], Array[Integer[0-59]], String, Integer[0-59]] $minute,
+    Variant[Array[String], Array[Integer[0-7]],  String, Integer[0-7]]  $weekday = '*',
+    Variant[Array[String], Array[Integer[1-31]], String, Integer[1-31]] $monthday = '*',
+    String                                                              $email = $::servermonitor,
+    Boolean                                                             $timestamp = true,
 )
 {
 

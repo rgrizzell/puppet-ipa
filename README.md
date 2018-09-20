@@ -1,5 +1,5 @@
 # easy_ipa Puppet module
-[![Build Status](https://travis-ci.org/jpuskar/puppet-ipa.svg?branch=master)](https://travis-ci.org/jpuskar/puppet-ipa)
+[![Build Status](https://travis-ci.org/Puppet-Finland/puppet-ipa.svg?branch=master)](https://travis-ci.org/Puppet-Finland/puppet-ipa)
 
 ## Overview
 

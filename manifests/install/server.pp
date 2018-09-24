@@ -47,6 +47,12 @@ class easy_ipa::install::server {
     $server_install_cmd_opts_setup_dns = ''
   }
 
+  if $easy_ipa::configure_replica_ca {
+    $server_install_cmd_opts_setup_ca = '--setup-ca'
+  } else {
+    $server_install_cmd_opts_setup_ca = ''
+  }
+
   if $easy_ipa::configure_ntp {
     $server_install_cmd_opts_no_ntp = ''
   } else {

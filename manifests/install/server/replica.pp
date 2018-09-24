@@ -11,6 +11,7 @@ class easy_ipa::install::server::replica {
   ${easy_ipa::install::server::server_install_cmd_opts_zone_overlap} \
   ${easy_ipa::install::server::server_install_cmd_opts_dnssec_validation} \
   ${easy_ipa::install::server::server_install_cmd_opts_setup_dns} \
+  ${easy_ipa::install::server::server_install_cmd_opts_setup_ca} \
   ${easy_ipa::install::server::server_install_cmd_opts_forwarders} \
   ${easy_ipa::install::server::server_install_cmd_opts_ip_address} \
   ${easy_ipa::install::server::server_install_cmd_opts_no_ntp} \

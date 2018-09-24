@@ -38,6 +38,9 @@
 #      (boolean) If true, then the parameter '--setup-dns' is passed to the IPA server installer.
 #                Also, triggers the install of the required dns server packages.
 #
+# `configure_replica_ca`
+#      (boolean) If true, then the parameter '--setup-ca' is passed to the IPA replica installer.
+#
 # `configure_ntp`
 #      (boolean) If false, then the parameter '--no-ntp' is passed to the IPA client and server
 #                installers.
@@ -153,6 +156,7 @@ class easy_ipa (
   Boolean       $no_dnssec_validation               = false,
   Boolean       $client_install_ldaputils           = false,
   Boolean       $configure_dns_server               = true,
+  Boolean       $configure_replica_ca               = false,
   Boolean       $configure_ntp                      = true,
   Boolean       $configure_sshd                     = true,
   Array[String] $custom_dns_forwarders              = [],

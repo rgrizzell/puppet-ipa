@@ -168,6 +168,9 @@ Name of the autofs package to install if enabled.
 If true, then the parameter '--setup-dns' is passed to the IPA server installer.
 Also, triggers the install of the required dns server packages.
 
+#### `configure_replica_ca`
+If true, then the parameter '--setup-ca' is passed to the IPA replica installer.
+
 #### `configure_ntp`
 If false, then the parameter '--no-ntp' is passed to the IPA server installer.
 

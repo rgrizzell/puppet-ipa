@@ -40,6 +40,12 @@ class easy_ipa::install::client {
     $client_install_cmd_opts_no_sshd = '--no-sshd'
   }
 
+  if $easy_ipa::enable_hostname {
+    $client_install_cmd_opts_hostname = "--hostname=${::fqdn}"
+  } else {
+    $client_install_cmd_opts_hostname = ''
+  }
+
     $client_install_cmd = "\
 /usr/sbin/ipa-client-install \
   --server=${easy_ipa::ipa_master_fqdn} \
@@ -47,6 +53,7 @@ class easy_ipa::install::client {
   --domain=${easy_ipa::domain} \
   --principal='${easy_ipa::final_domain_join_principal}' \
   --password='${easy_ipa::final_domain_join_password}' \
+  ${client_install_cmd_opts_hostname} \
   ${client_install_cmd_opts_mkhomedir} \
   ${client_install_cmd_opts_fixed_primary} \
   ${client_install_cmd_opts_no_ntp} \

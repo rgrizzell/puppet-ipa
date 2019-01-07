@@ -185,7 +185,7 @@ The password for the domain_join_principal.
 
 #### `enable_hostname`
 If true, then the parameter '--hostname' is populated with the parameter 'ipa_server_fqdn'
-and passed to the IPA installer.
+and passed to the IPA installer. On client installs '--hostname' is populated with `$::fqdn`.
 
 #### `enable_ip_address`
 If true, then the parameter '--ip-address' is populated with the parameter 'ip_address'

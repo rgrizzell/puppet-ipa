@@ -20,6 +20,7 @@ describe 'easy_ipa', type: :class do
       {
         kernel: 'Linux',
         os: {
+          name: 'CentOS',
           family: 'RedHat',
           release: {
             major: '7',

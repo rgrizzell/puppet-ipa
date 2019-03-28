@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
         box.vm.network "forwarded_port", guest: 8000, host: 8000
         box.vm.network "forwarded_port", guest: 8440, host: 8440
         box.vm.provision "shell", path: "vagrant/common.sh"
+        box.vm.provision "shell", path: "vagrant/centos-7-disable-nm.sh"
         box.vm.provision "shell", path: "vagrant/ipa-server-1.sh"
     end
 
@@ -35,6 +36,7 @@ Vagrant.configure("2") do |config|
         end
         box.vm.network "private_network", ip: "192.168.44.36"
         box.vm.provision "shell", path: "vagrant/common.sh"
+        box.vm.provision "shell", path: "vagrant/centos-7-disable-nm.sh"
         box.vm.provision "shell", path: "vagrant/ipa-server-2.sh"
     end
 
@@ -51,6 +53,7 @@ Vagrant.configure("2") do |config|
         end
         box.vm.network "private_network", ip: "192.168.44.37"
         box.vm.provision "shell", path: "vagrant/common.sh"
+        box.vm.provision "shell", path: "vagrant/centos-7-disable-nm.sh"
         box.vm.provision "shell", path: "vagrant/ipa-client-1.sh"
     end
 

@@ -11,7 +11,7 @@ class easy_ipa::params {
   case $facts['os']['family'] {
     'RedHat': {
       case $facts['os']['release']['major'] {
-        /(6|7)/:   { }
+        /(6|7|30)/:   { }
         default: { fail('ERROR: unsupported operating system') }
       }
       $ldaputils_package_name = 'openldap-clients'

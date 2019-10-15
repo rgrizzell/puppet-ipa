@@ -4,6 +4,7 @@ class easy_ipa::config::admin_user {
   $uid_number = $easy_ipa::idstart
   $home_dir_path = '/home/admin'
   $keytab_path = "${home_dir_path}/admin.keytab"
+  $k5login_path = "${home_dir_path}/.k5login"
 
   # Ensure admin homedir and keytab files.
   file { $home_dir_path:
@@ -16,7 +17,7 @@ class easy_ipa::config::admin_user {
     require => Exec["server_install_${easy_ipa::ipa_server_fqdn}"],
   }
 
-  file { "${home_dir_path}/.k5login":
+  file { $k5login_path:
     owner   => $uid_number,
     group   => $uid_number,
     require => File[$home_dir_path],
@@ -31,9 +32,9 @@ class easy_ipa::config::admin_user {
   }
 
   # Gives admin user the host/fqdn principal.
-  k5login { "${home_dir_path}/.k5login":
+  k5login { $k5login_path:
     principals => $easy_ipa::master_principals,
-    notify     => File["${home_dir_path}/.k5login"],
+    notify     => File[$k5login_path],
     require    => File[$home_dir_path]
   }
 
@@ -77,7 +78,7 @@ class easy_ipa::config::admin_user {
     notify  => Exec['chown_admin_keytab'],
     require => [
       Package[$::easy_ipa::params::kstart_package_name],
-      K5login["${home_dir_path}/.k5login"],
+      K5login[$k5login_path],
       File[$home_dir_path]
     ],
   }

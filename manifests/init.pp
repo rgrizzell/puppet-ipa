@@ -5,9 +5,9 @@
 # Parameters
 # ----------
 # `manage`
-#      (boolean) Manage easy_ipa with Puppet. Defaults to true. Setting this to 
-#                to false is useful when a handful of hosts have unsupported 
-#                operating systems and you'd rather exclude them from FreeIPA 
+#      (boolean) Manage easy_ipa with Puppet. Defaults to true. Setting this to
+#                to false is useful when a handful of hosts have unsupported
+#                operating systems and you'd rather exclude them from FreeIPA
 #                instead of including the others individually. Use this with
 #                a separate Hiera level (e.g. $::lsbdistcodename) for maximum
 #                convenience.

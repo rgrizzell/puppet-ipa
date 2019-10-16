@@ -8,7 +8,7 @@
 # == Parameters
 #
 # [*email*]
-#   Email address to send notifications to. Defaults to top-scope variable 
+#   Email address to send notifications to. Defaults to top-scope variable
 #   $::servermonitor.
 #
 class easy_ipa::monit::server

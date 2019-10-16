@@ -10,9 +10,9 @@
 # [*type*]
 #   Backup type. Either 'full' (offline) or 'data' (online).
 # [*timestamp*]
-#   Keep the default timestamp in the backup directory. Valid values are true 
-#   (default) and false. Set this to false if you have and external system (e.g. 
-#   bacula) that fetches the backups periodically and handles versioning on its 
+#   Keep the default timestamp in the backup directory. Valid values are true
+#   (default) and false. Set this to false if you have and external system (e.g.
+#   bacula) that fetches the backups periodically and handles versioning on its
 #   own.
 # [*monthday*]
 # [*weekday*]

@@ -37,11 +37,14 @@ class easy_ipa::config::admin_user {
   }
 
   # Set keytab for admin user.
+  # kadmin.local must be run as `root` to log to `/var/log/kadmind.log`
   $configure_admin_keytab_cmd = "/usr/sbin/kadmin.local -q \"ktadd -norandkey -k ${keytab_path} admin\" "
+  # kvno must be run as the `admin` user to function
+  $configure_admin_keytab_cmd_unless = "/sbin/runuser -l admin -c \"/usr/bin/kvno -k ${keytab_path} admin@${easy_ipa::final_realm}\""
   exec { 'configure_admin_keytab':
     command => $configure_admin_keytab_cmd,
     cwd     => $home_dir_path,
-    unless  => shellquote('/usr/bin/kvno', '-k', $keytab_path, "admin@${easy_ipa::final_realm}"),
+    unless  => $configure_admin_keytab_cmd_unless,
     require => File[$home_dir_path],
     notify  => File[$keytab_path],
   }

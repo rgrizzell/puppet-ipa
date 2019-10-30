@@ -17,17 +17,15 @@ class easy_ipa::config::admin_user {
   }
 
   file { $k5login_path:
-    owner   => $uid_number,
-    group   => $uid_number,
-    require => File[$home_dir_path],
+    owner => $uid_number,
+    group => $uid_number,
   }
 
   # chown/chmod *after* file is created by kadmin.local
   file { $keytab_path:
-    owner   => $uid_number,
-    group   => $uid_number,
-    mode    => '0600',
-    require => File[$home_dir_path],
+    owner => $uid_number,
+    group => $uid_number,
+    mode  => '0600',
   }
 
   # Gives admin user the host/fqdn principal.

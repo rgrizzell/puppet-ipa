@@ -17,8 +17,9 @@ class easy_ipa::config::admin_user {
   }
 
   file { $k5login_path:
-    owner => $uid_number,
-    group => $uid_number,
+    owner   => $uid_number,
+    group   => $uid_number,
+    seluser => 'user_u',
   }
 
   # chown/chmod *after* file is created by kadmin.local

@@ -17,6 +17,11 @@ class easy_ipa::install::server {
 
   $server_install_cmd_opts_idstart = "--idstart=${easy_ipa::idstart}"
 
+  $server_install_cmd_opts_idmax = $easy_ipa::idmax ? {
+    undef   => '',
+    default => "--idmax=${easy_ipa::idmax}"
+  }
+
   if $easy_ipa::allow_zone_overlap {
     $server_install_cmd_opts_zone_overlap = '--allow-zone-overlap'
   } else {

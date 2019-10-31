@@ -74,6 +74,41 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('ipa-client') }
       end
 
+      context 'with idmax' do
+        let(:params) do
+          {
+            ipa_role:                    'master',
+            domain:                      'rspec.example.lan',
+            admin_password:              'rspecrspec123',
+            directory_services_password: 'rspecrspec123',
+            idstart:                     10_000,
+            idmax:                       20_000,
+          }
+        end
+
+        it do
+          is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--idstart=10000})
+          is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--idmax=20000})
+        end
+      end
+
+      context 'without idmax' do
+        let(:params) do
+          {
+            ipa_role:                    'master',
+            domain:                      'rspec.example.lan',
+            admin_password:              'rspecrspec123',
+            directory_services_password: 'rspecrspec123',
+            idstart:                     10_000,
+          }
+        end
+
+        it do
+          is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--idstart=10000})
+          is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--idmax})
+        end
+      end
+
       context 'with idstart out of range' do
         let(:params) do
           {
@@ -86,6 +121,21 @@ describe 'easy_ipa', type: :class do
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{an integer greater than 10000}) }
+      end
+
+      context 'with idstart greater than idmax' do
+        let(:params) do
+          {
+            ipa_role:                    'master',
+            domain:                      'rspec.example.lan',
+            admin_password:              'rspecrspec123',
+            directory_services_password: 'rspecrspec123',
+            idstart:                     44_444,
+            idmax:                       33_333,
+          }
+        end
+
+        it { is_expected.to raise_error(Puppet::Error, %r{"idmax" must be an integer greater than parameter "idstart"}) }
       end
 
       context 'with manage_host_entry but not ip_address' do

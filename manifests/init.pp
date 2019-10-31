@@ -73,6 +73,9 @@
 # `idstart`
 #      (integer) From the IPA man pages: "The starting user and group id number".
 #
+# `idmax`
+#      (integer) From the IPA man pages: "The max value for the IDs range (default: idstart+199999)".
+#
 # `install_autofs`
 #      (boolean) If true, then the autofs packages are installed.
 #
@@ -166,6 +169,7 @@ class easy_ipa (
   Boolean       $enable_ip_address                  = false,
   Boolean       $fixed_primary                      = false,
   Integer       $idstart                            = (fqdn_rand('10737') + 10000),
+  Variant[Integer,Undef] $idmax                     = undef,
   Boolean       $install_autofs                     = false,
   Boolean       $install_epel                       = true,
   Boolean       $install_kstart                     = true,

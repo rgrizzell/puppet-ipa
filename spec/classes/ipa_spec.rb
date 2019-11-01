@@ -97,6 +97,24 @@ describe 'easy_ipa', type: :class do
         end
       end
 
+      context 'configure_ssh' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_ssh: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_ssh: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+      end # configure_ssh
+
       context 'configure_sshd' do
         context 'true' do
           let(:params) do
@@ -214,6 +232,24 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('ipa-client') }
       end
 
+      context 'configure_ssh' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_ssh: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_ssh: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+      end # configure_ssh
+
       context 'configure_sshd' do
         context 'true' do
           let(:params) do
@@ -289,6 +325,24 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('ipa-server') }
         it { is_expected.not_to contain_package('openldap-clients') }
       end
+
+      context 'configure_ssh' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_ssh: true)
+          end
+
+          it { is_expected.not_to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_ssh: false)
+          end
+
+          it { is_expected.to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+      end # configure_ssh
 
       context 'configure_sshd' do
         context 'true' do

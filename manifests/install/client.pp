@@ -51,6 +51,7 @@ class easy_ipa::install::client {
   ${client_install_cmd_opts_mkhomedir} \
   ${client_install_cmd_opts_fixed_primary} \
   ${client_install_cmd_opts_no_ntp} \
+  ${easy_ipa::opt_no_ssh} \
   ${easy_ipa::opt_no_sshd} \
   --unattended"
 

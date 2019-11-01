@@ -197,6 +197,9 @@ If true, then the parameter '--fixed-primary' is passed to the IPA installer.
 #### `idstart`
 From the IPA man pages: "The starting user and group id number".
 
+#### `idmax`
+From the IPA man pages: "The max value for the IDs range (default: idstart+199999)".
+
 #### `install_autofs`
 If true, then the autofs packages are installed.
 

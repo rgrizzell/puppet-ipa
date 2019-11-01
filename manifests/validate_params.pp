@@ -22,6 +22,10 @@ class easy_ipa::validate_params {
     fail('Parameter "idstart" must be an integer greater than 10000.')
   }
 
+  if $easy_ipa::idmax and $easy_ipa::idmax < $easy_ipa::idstart {
+    fail('Parameter "idmax" must be an integer greater than parameter "idstart".')
+  }
+
   validate_legacy(Stdlib::Fqdn, 'validate_domain_name', $easy_ipa::domain)
   validate_legacy(Stdlib::Fqdn, 'validate_domain_name', $easy_ipa::final_realm)
 

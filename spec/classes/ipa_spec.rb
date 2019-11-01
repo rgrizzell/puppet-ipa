@@ -97,6 +97,24 @@ describe 'easy_ipa', type: :class do
         end
       end
 
+      context 'configure_sshd' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_sshd: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_sshd: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+      end # configure_sshd
+
       context 'with idstart out of range' do
         let(:params) do
           super().merge(idstart: 100)
@@ -196,6 +214,24 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('ipa-client') }
       end
 
+      context 'configure_sshd' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_sshd: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_sshd: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+      end # configure_sshd
+
       context 'missing ipa_master_fqdn' do
         let(:params) do
           super().merge(ipa_master_fqdn: '')
@@ -253,6 +289,24 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('ipa-server') }
         it { is_expected.not_to contain_package('openldap-clients') }
       end
+
+      context 'configure_sshd' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_sshd: true)
+          end
+
+          it { is_expected.not_to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_sshd: false)
+          end
+
+          it { is_expected.to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+      end # configure_sshd
 
       context 'missing ipa_master_fqdn' do
         let(:params) do

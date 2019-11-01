@@ -230,6 +230,11 @@ if $manage {
     $final_configure_dns_server = $configure_dns_server
   }
 
+  $opt_no_sshd = $configure_sshd ? {
+    true    => '',
+    default => '--no-sshd',
+  }
+
   class {'::easy_ipa::validate_params':}
   -> class {'::easy_ipa::install':}
 

@@ -45,6 +45,10 @@
 #      (boolean) If false, then the parameter '--no-ntp' is passed to the IPA client and server
 #                installers.
 #
+# `configure_ssh`
+#      (boolean) If false, then the parameter '--no-ssh' is passed to the IPA client and server
+#                installers.
+#
 # `configure_sshd`
 #      (boolean) If false, then the parameter '--no-sshd' is passed to the IPA client and server
 #                installers.
@@ -161,6 +165,7 @@ class easy_ipa (
   Boolean       $configure_dns_server               = true,
   Boolean       $configure_replica_ca               = false,
   Boolean       $configure_ntp                      = true,
+  Boolean       $configure_ssh                      = true,
   Boolean       $configure_sshd                     = true,
   Array[String] $custom_dns_forwarders              = [],
   String        $domain_join_principal              = '',
@@ -228,6 +233,16 @@ if $manage {
     $final_configure_dns_server = false
   } else {
     $final_configure_dns_server = $configure_dns_server
+  }
+
+  $opt_no_ssh = $configure_ssh ? {
+    true    => '',
+    default => '--no-ssh',
+  }
+
+  $opt_no_sshd = $configure_sshd ? {
+    true    => '',
+    default => '--no-sshd',
   }
 
   class {'::easy_ipa::validate_params':}

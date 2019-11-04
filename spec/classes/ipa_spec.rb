@@ -42,16 +42,16 @@ describe 'easy_ipa', type: :class do
     end
 
     context 'as master' do
-      context 'with defaults' do
-        let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-          }
-        end
+      let(:params) do
+        {
+          ipa_role:                    'master',
+          domain:                      'rspec.example.lan',
+          admin_password:              'rspecrspec123',
+          directory_services_password: 'rspecrspec123',
+        }
+      end
 
+      context 'with defaults' do
         it { is_expected.to contain_class('easy_ipa::install') }
         it { is_expected.to contain_class('easy_ipa::install::server') }
         it { is_expected.to contain_class('easy_ipa::install::sssd') }
@@ -76,14 +76,8 @@ describe 'easy_ipa', type: :class do
 
       context 'with idmax' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-            idstart:                     10_000,
-            idmax:                       20_000,
-          }
+          super().merge(idstart: 10_000,
+                        idmax:   20_000)
         end
 
         it do
@@ -94,13 +88,7 @@ describe 'easy_ipa', type: :class do
 
       context 'without idmax' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-            idstart:                     10_000,
-          }
+          super().merge(idstart: 10_000)
         end
 
         it do
@@ -109,15 +97,45 @@ describe 'easy_ipa', type: :class do
         end
       end
 
+      context 'configure_ssh' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_ssh: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_ssh: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+      end # configure_ssh
+
+      context 'configure_sshd' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_sshd: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_sshd: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+      end # configure_sshd
+
       context 'with idstart out of range' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-            idstart:                     100,
-          }
+          super().merge(idstart: 100)
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{an integer greater than 10000}) }
@@ -125,14 +143,8 @@ describe 'easy_ipa', type: :class do
 
       context 'with idstart greater than idmax' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-            idstart:                     44_444,
-            idmax:                       33_333,
-          }
+          super().merge(idstart: 44_444,
+                        idmax:   33_333)
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{"idmax" must be an integer greater than parameter "idstart"}) }
@@ -140,13 +152,7 @@ describe 'easy_ipa', type: :class do
 
       context 'with manage_host_entry but not ip_address' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-            manage_host_entry:           true,
-          }
+          super().merge(manage_host_entry: true)
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{parameter ip_address is mandatory}) }
@@ -154,12 +160,7 @@ describe 'easy_ipa', type: :class do
 
       context 'without admin_password' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            # admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-          }
+          super().merge(admin_password: nil)
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{populated and at least of length 8}) }
@@ -167,12 +168,7 @@ describe 'easy_ipa', type: :class do
 
       context 'without directory_services_password' do
         let(:params) do
-          {
-            ipa_role:                     'master',
-            domain:                       'rspec.example.lan',
-            admin_password:               'rspecrspec123',
-            # directory_services_password: 'rspecrspec123',
-          }
+          super().merge(directory_services_password: nil)
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{populated and at least of length 8}) }
@@ -180,13 +176,7 @@ describe 'easy_ipa', type: :class do
 
       context 'with bad ip_address' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-            ip_address:                  'not_an_ip',
-          }
+          super().merge(ip_address: 'not_an_ip')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{expects a.*Stdlib::IP::Address}) }
@@ -194,12 +184,7 @@ describe 'easy_ipa', type: :class do
 
       context 'with bad domain' do
         let(:params) do
-          {
-            ipa_role:                     'master',
-            domain:                       'not_a_domain',
-            admin_password:               'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-          }
+          super().merge(domain: 'not_a_domain')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{expects a match for Stdlib::Fqdn}) }
@@ -207,13 +192,7 @@ describe 'easy_ipa', type: :class do
 
       context 'with bad realm' do
         let(:params) do
-          {
-            ipa_role:                    'master',
-            domain:                      'rspec.example.lan',
-            realm:                       'not_a_realm',
-            admin_password:              'rspecrspec123',
-            directory_services_password: 'rspecrspec123',
-          }
+          super().merge(realm: 'not_a_realm')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{a match for Stdlib::Fqdn}) }
@@ -221,16 +200,16 @@ describe 'easy_ipa', type: :class do
     end
 
     context 'as replica' do
-      context 'with defaults' do
-        let(:params) do
-          {
-            ipa_role:                    'replica',
-            domain:                      'rspec.example.lan',
-            ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
-            domain_join_password:        'rspecrspec123',
-          }
-        end
+      let(:params) do
+        {
+          ipa_role:                    'replica',
+          domain:                      'rspec.example.lan',
+          ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
+          domain_join_password:        'rspecrspec123',
+        }
+      end
 
+      context 'with defaults' do
         it { is_expected.to contain_class('easy_ipa::install') }
         it { is_expected.to contain_class('easy_ipa::install::server') }
         it { is_expected.to contain_class('easy_ipa::install::sssd') }
@@ -253,14 +232,45 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('ipa-client') }
       end
 
+      context 'configure_ssh' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_ssh: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_ssh: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+      end # configure_ssh
+
+      context 'configure_sshd' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_sshd: true)
+          end
+
+          it { is_expected.not_to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_sshd: false)
+          end
+
+          it { is_expected.to contain_exec('server_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+      end # configure_sshd
+
       context 'missing ipa_master_fqdn' do
         let(:params) do
-          {
-            ipa_role:                    'replica',
-            domain:                      'rspec.example.lan',
-            # ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
-            domain_join_password:        'rspecrspec123',
-          }
+          super().merge(ipa_master_fqdn: '')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{parameter named ipa_master_fqdn cannot be empty}) }
@@ -268,12 +278,7 @@ describe 'easy_ipa', type: :class do
 
       context 'with bad ipa_master_fqdn' do
         let(:params) do
-          {
-            ipa_role:                    'replica',
-            domain:                      'rspec.example.lan',
-            ipa_master_fqdn:             'not_an_fqdn',
-            domain_join_password:        'rspecrspec123',
-          }
+          super().merge(ipa_master_fqdn: 'not_an_fqdn')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{expects a match for Stdlib::Fqdn}) }
@@ -281,12 +286,7 @@ describe 'easy_ipa', type: :class do
 
       context 'missing domain_join_password' do
         let(:params) do
-          {
-            ipa_role:                    'replica',
-            domain:                      'rspec.example.lan',
-            ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
-            # domain_join_password        'rspecrspec123',
-          }
+          super().merge(domain_join_password: '')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{domain_join_password cannot be empty}) }
@@ -294,16 +294,16 @@ describe 'easy_ipa', type: :class do
     end
 
     context 'as client' do
-      context 'with defaults' do
-        let(:params) do
-          {
-            ipa_role:                    'client',
-            domain:                      'rspec.example.lan',
-            ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
-            domain_join_password:        'rspecrspec123',
-          }
-        end
+      let(:params) do
+        {
+          ipa_role:                    'client',
+          domain:                      'rspec.example.lan',
+          ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
+          domain_join_password:        'rspecrspec123',
+        }
+      end
 
+      context 'with defaults' do
         it { is_expected.to contain_class('easy_ipa::install') }
         it { is_expected.to contain_class('easy_ipa::install::sssd') }
         it { is_expected.to contain_class('easy_ipa::install::client') }
@@ -326,14 +326,45 @@ describe 'easy_ipa', type: :class do
         it { is_expected.not_to contain_package('openldap-clients') }
       end
 
+      context 'configure_ssh' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_ssh: true)
+          end
+
+          it { is_expected.not_to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_ssh: false)
+          end
+
+          it { is_expected.to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-ssh(?!d)}) }
+        end
+      end # configure_ssh
+
+      context 'configure_sshd' do
+        context 'true' do
+          let(:params) do
+            super().merge(configure_sshd: true)
+          end
+
+          it { is_expected.not_to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+
+        context 'false' do
+          let(:params) do
+            super().merge(configure_sshd: false)
+          end
+
+          it { is_expected.to contain_exec('client_install_ipa.rpsec.example.lan').with_command(%r{--no-sshd}) }
+        end
+      end # configure_sshd
+
       context 'missing ipa_master_fqdn' do
         let(:params) do
-          {
-            ipa_role:                    'client',
-            domain:                      'rspec.example.lan',
-            # ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
-            domain_join_password:        'rspecrspec123',
-          }
+          super().merge(ipa_master_fqdn: '')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{parameter named ipa_master_fqdn cannot be empty}) }
@@ -341,12 +372,7 @@ describe 'easy_ipa', type: :class do
 
       context 'missing domain_join_password' do
         let(:params) do
-          {
-            ipa_role:                    'client',
-            domain:                      'rspec.example.lan',
-            ipa_master_fqdn:             'ipa-server-1.rspec.example.lan',
-            # domain_join_password:        'rspecrspec123',
-          }
+          super().merge(domain_join_password: '')
         end
 
         it { is_expected.to raise_error(Puppet::Error, %r{parameter named domain_join_password cannot be empty}) }

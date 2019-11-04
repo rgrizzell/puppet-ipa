@@ -34,12 +34,6 @@ class easy_ipa::install::client {
     $client_install_cmd_opts_no_ntp = '--no-ntp'
   }
 
-  if $easy_ipa::configure_sshd {
-    $client_install_cmd_opts_no_sshd = ''
-  } else {
-    $client_install_cmd_opts_no_sshd = '--no-sshd'
-  }
-
   if $easy_ipa::enable_hostname {
     $client_install_cmd_opts_hostname = "--hostname=${::fqdn}"
   } else {
@@ -57,7 +51,8 @@ class easy_ipa::install::client {
   ${client_install_cmd_opts_mkhomedir} \
   ${client_install_cmd_opts_fixed_primary} \
   ${client_install_cmd_opts_no_ntp} \
-  ${client_install_cmd_opts_no_sshd} \
+  ${easy_ipa::opt_no_ssh} \
+  ${easy_ipa::opt_no_sshd} \
   --unattended"
 
   # Some platforms require "manual" setup as they don't have the freeipa-client

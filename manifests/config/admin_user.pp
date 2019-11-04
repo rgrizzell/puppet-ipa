@@ -13,22 +13,20 @@ class easy_ipa::config::admin_user {
     owner   => $uid_number,
     group   => $uid_number,
     recurse => true,
-    notify  => Exec['configure_admin_keytab'],
     require => Exec["server_install_${easy_ipa::ipa_server_fqdn}"],
   }
 
   file { $k5login_path:
     owner   => $uid_number,
     group   => $uid_number,
-    require => File[$home_dir_path],
+    seluser => 'user_u',
   }
 
+  # chown/chmod *after* file is created by kadmin.local
   file { $keytab_path:
-    owner   => $uid_number,
-    group   => $uid_number,
-    mode    => '0600',
-    require => File[$home_dir_path],
-    notify  => Exec['configure_admin_keytab'],
+    owner => $uid_number,
+    group => $uid_number,
+    mode  => '0600',
   }
 
   # Gives admin user the host/fqdn principal.
@@ -39,23 +37,16 @@ class easy_ipa::config::admin_user {
   }
 
   # Set keytab for admin user.
+  # kadmin.local must be run as `root` to log to `/var/log/kadmind.log`
   $configure_admin_keytab_cmd = "/usr/sbin/kadmin.local -q \"ktadd -norandkey -k ${keytab_path} admin\" "
+  # kvno must be run as the `admin` user to function
+  $configure_admin_keytab_cmd_unless = "/sbin/runuser -l admin -c \"/usr/bin/kvno -k ${keytab_path} admin@${easy_ipa::final_realm}\""
   exec { 'configure_admin_keytab':
-    command     => $configure_admin_keytab_cmd,
-    cwd         => $home_dir_path,
-    unless      => shellquote('/usr/bin/kvno', '-k', $keytab_path, "admin@${easy_ipa::final_realm}"),
-    notify      => Exec['chown_admin_keytab'],
-    refreshonly => true,
-    require     => Cron['k5start_admin'],
-  }
-
-  $chown_admin_keytab_cmd = "chown ${uid_number}:${uid_number} ${keytab_path}"
-  $chown_admin_keytab_cmd_unless = "ls -lan ${keytab_path} | grep ${uid_number}\\ ${uid_number} "
-  exec { 'chown_admin_keytab':
-    command  => $chown_admin_keytab_cmd,
-    cwd      => $home_dir_path,
-    unless   => $chown_admin_keytab_cmd_unless,
-    provider => shell,
+    command => $configure_admin_keytab_cmd,
+    cwd     => $home_dir_path,
+    unless  => $configure_admin_keytab_cmd_unless,
+    require => File[$home_dir_path],
+    notify  => File[$keytab_path],
   }
 
   $k5start_admin_keytab_cmd = "/sbin/runuser -l admin -c \"/usr/bin/k5start -f ${keytab_path} -U\""
@@ -65,9 +56,10 @@ class easy_ipa::config::admin_user {
     cwd     => $home_dir_path,
     unless  => $k5start_admin_keytab_cmd_unless,
     require => [
+      File[$k5login_path],
+      File[$keytab_path],
       Cron['k5start_admin'],
-      Exec['chown_admin_keytab'],
-    ]
+    ],
   }
 
   # Automatically refreshes admin keytab.
@@ -75,12 +67,9 @@ class easy_ipa::config::admin_user {
     command => "/usr/bin/k5start -f ${keytab_path} -U > /dev/null 2>&1",
     user    => 'admin',
     minute  => '*/1',
-    notify  => Exec['chown_admin_keytab'],
     require => [
-      Package[$::easy_ipa::params::kstart_package_name],
-      K5login[$k5login_path],
-      File[$home_dir_path]
+      File[$k5login_path],
+      File[$keytab_path],
     ],
   }
-
 }

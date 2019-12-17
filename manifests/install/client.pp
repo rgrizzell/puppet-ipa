@@ -34,6 +34,12 @@ class easy_ipa::install::client {
     $client_install_cmd_opts_no_ntp = '--no-ntp'
   }
 
+  if $easy_ipa::enable_dns_updates {
+    $client_install_cmd_opts_dns_updates = "--enable-dns-updates"
+  } else {
+    $client_install_cmd_opts_dns_updates = ''
+  }
+
   if $easy_ipa::enable_hostname {
     $client_install_cmd_opts_hostname = "--hostname=${::fqdn}"
   } else {
@@ -53,6 +59,7 @@ class easy_ipa::install::client {
   --domain=${easy_ipa::domain} \
   --principal='${easy_ipa::final_domain_join_principal}' \
   --password='${easy_ipa::final_domain_join_password}' \
+  ${client_install_cmd_opts_dns_updates} \
   ${client_install_cmd_opts_hostname} \
   ${client_install_cmd_opts_mkhomedir} \
   ${client_install_cmd_opts_fixed_primary} \

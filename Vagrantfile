@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.define "ipa-server-1" do |box|
         box.vm.box = "centos/7"
-        box.vm.box_version = "1901.01"
+        box.vm.box_version = "1905.01"
         box.vm.hostname = 'ipa-server-1.vagrant.example.lan'
         # Assign this VM to a host-only network IP, allowing you to access it
         # via the IP.
@@ -20,12 +20,13 @@ Vagrant.configure("2") do |config|
         box.vm.network "forwarded_port", guest: 8440, host: 8440
         box.vm.provision "shell", path: "vagrant/common.sh"
         box.vm.provision "shell", path: "vagrant/centos-7-disable-nm.sh"
+        box.vm.provision "shell", path: "vagrant/centos-7.sh"
         box.vm.provision "shell", path: "vagrant/ipa-server-1.sh"
     end
 
     config.vm.define "ipa-server-2" do |box|
         box.vm.box = "centos/7"
-        box.vm.box_version = "1901.01"
+        box.vm.box_version = "1905.01"
         box.vm.hostname = 'ipa-server-2.vagrant.example.lan'
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
@@ -37,12 +38,13 @@ Vagrant.configure("2") do |config|
         box.vm.network "private_network", ip: "192.168.44.36"
         box.vm.provision "shell", path: "vagrant/common.sh"
         box.vm.provision "shell", path: "vagrant/centos-7-disable-nm.sh"
+        box.vm.provision "shell", path: "vagrant/centos-7.sh"
         box.vm.provision "shell", path: "vagrant/ipa-server-2.sh"
     end
 
     config.vm.define "ipa-client-1" do |box|
         box.vm.box = "centos/7"
-        box.vm.box_version = "1901.01"
+        box.vm.box_version = "1905.01"
         box.vm.hostname = 'ipa-client-1.vagrant.example.lan'
         box.vm.provider 'virtualbox' do |vb|
             vb.customize ["modifyvm", :id, "--natnet1", "172.31.9/24"]
@@ -54,6 +56,7 @@ Vagrant.configure("2") do |config|
         box.vm.network "private_network", ip: "192.168.44.37"
         box.vm.provision "shell", path: "vagrant/common.sh"
         box.vm.provision "shell", path: "vagrant/centos-7-disable-nm.sh"
+        box.vm.provision "shell", path: "vagrant/centos-7.sh"
         box.vm.provision "shell", path: "vagrant/ipa-client-1.sh"
     end
 

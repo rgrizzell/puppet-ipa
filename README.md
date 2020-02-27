@@ -98,6 +98,15 @@ false. A wrapper script is used as ipa-backup always adds a timestamp to the
 backup directory, which makes no sense if an external system (e.g. Bacula) is 
 handling backup versioning anyways.
 
+Adding a local named.conf configuration fragment:
+```puppet
+::easy_ipa::config::named { 'tsig-key':
+  content => template('profile/named-tsig-key.conf.erb'),
+}
+```
+These can be used for various purposes, for example to add a key which allows
+dynamic DNS updates to certain DNS zones.
+
 Adding a client:
 ```puppet
 class {'::easy_ipa':

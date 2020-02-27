@@ -17,6 +17,7 @@ class easy_ipa::params {
       $ldaputils_package_name = 'openldap-clients'
       $ipa_client_package_name = 'ipa-client'
       $ipa_client_package_ensure = 'present'
+      $named_conf_d = '/etc/named/conf.d'
     }
     'Debian': {
       case $facts['os']['distro']['codename'] {

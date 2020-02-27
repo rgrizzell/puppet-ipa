@@ -63,6 +63,9 @@
 # `domain_join_password`
 #      (string) The password for the domain_join_principal.
 #
+# `enable_dns_updates`
+#      (boolean) If true, then the parameter '--enable-dns-updates' is passed to the IPA installer.
+#
 # `enable_hostname`
 #      (boolean) If true, then the parameter '--hostname' is populated with the parameter 'ipa_server_fqdn'
 #                and passed to the IPA installer.
@@ -170,6 +173,7 @@ class easy_ipa (
   Array[String] $custom_dns_forwarders              = [],
   String        $domain_join_principal              = '',
   String        $domain_join_password               = '',
+  Boolean       $enable_dns_updates                 = false,
   Boolean       $enable_hostname                    = true,
   Boolean       $enable_ip_address                  = false,
   Boolean       $fixed_primary                      = false,
